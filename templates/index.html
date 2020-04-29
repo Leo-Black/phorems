@@ -1,20 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Sets up basic attributes of the website -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Sets the text displayed on the website tab -->
     <title>Phorem</title>
+    <!-- Links to bootstrap, jquery and popper.js -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </head>
-<body style="padding: 0px 30px;">
+
+<!-- Adds padding of 30px on the left and right -->
+<body class='Site' style="padding: 0px 30px;">
+    <!-- Sets the title in display text -->
     <h1 class='display-3'>phorem.</h1>
-    <hr style="width: 95%;height:2px;background-color:#999;border-radius:2px;">
-    <div class="row">
-        <div class="col-sm-4" style="background-color:lavender;">Menu</div>
-        <div class="col-sm-8" style="background-color:lavender;">Posts</div>
-      </div>
+    <!-- Adds a horizontal line and a line break as a divider between the title and the bulk of the website -->
+    <hr style="width:95%;height:3px;background-color:#999;border-radius:3px;">
+    <br>
+    <main class='Site-content'>
+        <h4 style='padding:0px 100px;'>Recent Activity:</h4>
+    </main>
+    <footer style='padding: 30px 0px;text-align: center;'>
+        <!-- Adds a horizontal line as a divider between the bulk of the website and the footer -->
+        <hr style="width:95%;height:3px;background-color:#777;border-radius:3px;">
+        <!-- Sets the copyright text -->
+        &copy Leo Black 2020
+    </footer>
 </body>
+
+<!-- Styles the page to set the footer to below the content if the user has to scroll or at the bottom of the screen if there is little content -->
+<style>
+    .Site {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.Site-content {
+  flex: 1;
+}
+</style>
 </html>
