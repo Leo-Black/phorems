@@ -1,0 +1,12 @@
+/* Doesn't work in static folder, will be changed when Flask is added */
+
+/* Styles the page to set the footer to below the content if the user has to scroll or at the bottom of the screen if there is little content*/
+.Site {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.Site-content {
+  flex: 1;
+}
