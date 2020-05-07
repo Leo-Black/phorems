@@ -1,6 +1,6 @@
 /* Doesn't work in static folder, will be changed when Flask is added */
 
-/* Styles the page to set the footer to below the content if the user has to scroll or at the bottom of the screen if there is little content*/
+/* Sets the footer to below the content if the user has to scroll or at the bottom of the screen if there isn't much content*/
 .Site {
   display: flex;
   min-height: 100vh;
@@ -9,4 +9,10 @@
 
 .Site-content {
   flex: 1;
+}
+
+/* Sets links to black and to not change colour or be underlined when hovered over */
+a {
+  text-decoration: none !important;
+  color: #000 !important;
 }
