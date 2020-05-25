@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>phorem</title>
+</head>
+<body>
+    {% block body %}
+        {% if session['logged_in'] %}
+        {% else %}
+            <form action='/login' method='POST'>
+                <input type='username' placeholder='Username' name='username'>
+                <input type='password' placeholder='Password' name='password'>
+                <input type='submit' value='Log In'>
+            </form>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <h3>{{ message }}</h3>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+    {% endblock %}
+</body>
+</html>
