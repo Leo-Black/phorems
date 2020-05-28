@@ -1,7 +1,7 @@
 from sqlite3 import connect # Gives the ability to connect to sqlite3 databases
 from flask import Flask, g, redirect, render_template, request, url_for, session, flash, abort # Allows the use of Flask, g, redirecting, HTML templates and requesting
 from flask_login import LoginManager # Allows the use of logging in and out via the flask login manager
-import os
+from os import urandom
 
 app = Flask(__name__) # Initialises the app
 login = LoginManager(app)
@@ -35,6 +35,8 @@ def login():
         if request.form['password'] == 'admin' and request.form['username'] == 'admin':
             session['logged_in'] = True
             return redirect(url_for('index'))
+        if request.form['password'] == '' and request.form['username'] == '':
+            return redirect(url_for('index'))
         flash('Incorrect Credentials')
         return redirect(url_for('index'))
 
@@ -46,8 +48,10 @@ def logout():
 @app.route('/account')
 def account():
     '''Renders the HTML template 'account.html'.'''
-    return render_template('account.html')
+    if 'logged_in' in session:
+        return render_template('account.html')
+    return redirect(url_for('index'))
 
 if __name__ == '__main__': # Runs the application and sets the secret key to a random 12 byte object
-    app.secret_key = os.urandom(12)
+    app.secret_key = urandom(12)
     app.run(debug=True)

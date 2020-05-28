@@ -1,5 +1,3 @@
-/* Doesn't work in static folder, will be changed when Flask is added */
-
 /* Sets the footer to below the content if the user has to scroll or at the bottom of the screen if there isn't much content*/
 .Site {
   display: flex;
@@ -12,7 +10,9 @@
 }
 
 /* Sets links to black and to not change colour or be underlined when hovered over */
-a {
+h1 {
   text-decoration: none !important;
   color: #000 !important;
 }
+
+/* Add login and logout styling */
