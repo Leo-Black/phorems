@@ -2,6 +2,7 @@ from sqlite3 import connect # Gives the ability to connect to sqlite3 databases
 from flask import Flask, g, redirect, render_template, request, url_for, session, flash, abort # Allows the use of Flask, g, redirecting, HTML templates and requesting
 from flask_login import LoginManager # Allows the use of logging in and out via the flask login manager
 from os import urandom
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__) # Initialises the app
 login = LoginManager(app) 
@@ -39,7 +40,7 @@ def signup():
         error = 'Username already taken. Please try again.'
         return render_template('signup.html', error=error)
     sql_query = 'INSERT INTO Users (Username, Password) VALUES (?,?)' # Adds the username and password into the database
-    cursor.execute(sql_query, (new_username, new_password))
+    cursor.execute(sql_query, (new_username, generate_password_hash(new_password, 'SHA256'))) # Executes the query and hashes the password using the method SHA256
     get_database().commit() # Commits and stores the values in the database
     session['logged_in'] = True # Sets the user's status as logged in
     return redirect(url_for('index'))
@@ -53,14 +54,18 @@ def login():
     cursor = get_database().cursor() # Sets up the SQL cursor
     username = request.form['username'] # Gets the inputted username value
     password = request.form['password'] # Gets the inputted password value
-    sql_query = 'SELECT ID FROM Users WHERE Username = ? AND Password = ?' # Returns the user with the inputted username and password values
-    cursor.execute(sql_query, (username, password))
+    sql_query = 'SELECT Password FROM Users WHERE Username = ?' # Returns the user with the inputted username value
+    cursor.execute(sql_query, (username,))
     result = cursor.fetchall()
-    if bool(result): # Checks if there is a user with the inputted values
-        session['logged_in'] = True # Sets the user's status as logged in
-        return redirect(url_for('index'))
+    if bool(result): # Checks if the username entered is correct
+        if check_password_hash(result[0][0], password): # Checks if the password entered is correct
+            session['logged_in'] = True # Sets the user's status as logged in
+            return redirect(url_for('index'))
     if username == '' and password == '': # Checks if nothing is inputted and doesn't show an error
         return redirect(url_for('index'))
+    if username == '' or password == '':
+        error = 'Please enter a username and a password.'
+        return render_template('login.html', error=error)
     error = 'Incorrect Credentials'
     return render_template('login.html', error=error) # Starts again and flashes the error message
 
