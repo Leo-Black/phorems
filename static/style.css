@@ -10,9 +10,7 @@
 }
 
 /* Sets links to black and to not change colour or be underlined when hovered over */
-h1 {
+a {
   text-decoration: none !important;
   color: #000 !important;
 }
-
-/* Add login and logout styling */

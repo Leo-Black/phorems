@@ -18,29 +18,23 @@
             <h1 class='display-3'>phorem.</h1>
         </div>
         <div class='col-1'>
-            <form action='/signup' style='padding-top: 32.5px; padding-right: 5px;'>
-                <input type='submit' value='Sign Up'>
+            <form action='/login' style='padding-top: 32.5px; padding-right: 5px;'>
+                <input type='submit' value='Log In'>
             </form>
         </div>
     </div>
     <!-- Adds a horizontal line and a line break as a divider between the title and the login section -->
     <hr style="width:95%;height:3px;background-color:#999;border-radius:3px;">
     <main class='Site-content'>
-        {% block body %}
-            {% if not session['logged_in'] %}
-                <form action='/login' method='POST' style='padding: 20px 45px;'>
-                    <input type='username' placeholder='Username' name='username'>
-                    <input type='password' placeholder='Password' name='password'>
-                    <input type='submit' value='Log In'>
-                </form>
-
-                {% if error %}
-                    <h3><p class='error' style='color: #000;'>{{ error }}</p></h3>
-                {% endif %}
-            {% endif %}
-        {% endblock %}
+        <form action='/signup' method='POST' style='padding: 20px 45px;'>
+            <input type='username' placeholder='Username' name='username'>
+            <input type='password' placeholder='Password' name='password'>
+            <input type='submit' value='Sign Up'>
+        </form>
+        {% if error %}
+            <h3><p class='error' style='color: #000;'>{{ error }}</p></h3>
+        {% endif %}
     </main>
-    
     <footer style='padding: 30px 0px; text-align: center;'>
         <!-- Adds a horizontal line as a divider between the bulk of the website and the footer -->
         <hr style="width:95%;height:3px;background-color:#888;border-radius:3px;">
