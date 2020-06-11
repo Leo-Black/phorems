@@ -1,3 +1,8 @@
+"""
+Leo Black
+Phorem Flask Application
+"""
+
 from sqlite3 import connect # Gives the ability to connect to sqlite3 databases
 from flask import Flask, g, redirect, render_template, request, url_for, session, flash, abort # Allows the use of Flask, g, redirecting, HTML templates and requesting
 from flask_login import LoginManager # Allows the use of logging in and out via the flask login manager
@@ -25,7 +30,7 @@ def close_connection(exception):
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     '''Allows users to sign up with a username and password if the username is unique and neither values are blank.'''
-    if request.method != 'POST': # Checks if values have not yet been inputted and redirects to the signup page if not
+    if request.method == 'GET': # Checks if values have not yet been inputted and redirects to the signup page if not
         return render_template('signup.html')
     error = None
     cursor = get_database().cursor() # Sets up the SQL cursor
@@ -42,6 +47,9 @@ def signup():
     sql_query = 'INSERT INTO Users (Username, Password) VALUES (?,?)' # Adds the username and password into the database
     cursor.execute(sql_query, (new_username, generate_password_hash(new_password, 'SHA256'))) # Executes the query and hashes the password using the method SHA256
     get_database().commit() # Commits and stores the values in the database
+    sql_query = 'SELECT ID FROM Users WHERE Username = ?'
+    cursor.execute(sql_query, (new_username,))
+    user_id = cursor.fetchall()[0][0]
     session['logged_in'] = True # Sets the user's status as logged in
     return redirect(url_for('index'))
 
@@ -54,17 +62,19 @@ def login():
     cursor = get_database().cursor() # Sets up the SQL cursor
     username = request.form['username'] # Gets the inputted username value
     password = request.form['password'] # Gets the inputted password value
-    sql_query = 'SELECT Password FROM Users WHERE Username = ?' # Returns the user with the inputted username value
+    sql_query = 'SELECT ID, Password FROM Users WHERE Username = ?' # Returns the user with the inputted username value
     cursor.execute(sql_query, (username,))
-    result = cursor.fetchall()
-    if bool(result): # Checks if the username entered is correct
-        if check_password_hash(result[0][0], password): # Checks if the password entered is correct
+    results = cursor.fetchall()
+    if bool(results): # Checks if the username entered is correct
+        if check_password_hash(results[0][1], password): # Checks if the password entered is correct
             session['logged_in'] = True # Sets the user's status as logged in
-            return redirect(url_for('index'))
+            global user_id
+            user_id = results[0][0]
+            return index()
     if username == '' and password == '': # Checks if nothing is inputted and doesn't show an error
         return redirect(url_for('index'))
     if username == '' or password == '':
-        error = 'Please enter a username and a password.'
+        error = 'Please enter a username and a password.' # Checks if nothing is inputted in one of the values
         return render_template('login.html', error=error)
     error = 'Incorrect Credentials'
     return render_template('login.html', error=error) # Starts again and flashes the error message
@@ -75,12 +85,26 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('index'))
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     '''Renders the HTML template 'index.html' as the home page if the user is logged in.'''
+    cursor = get_database().cursor()
     if 'logged_in' not in session:
         return render_template('login.html', error=None)
-    return render_template('index.html')
+    try: # Finds out if the input is for a post or for logging in
+        sql_query = 'INSERT INTO Posts (Title, Body, Creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
+        cursor.execute(sql_query, (request.form['title'], request.form['body'], user_id)) # Will raise KeyError if inputs are username and password instead of title and body
+        get_database().commit()
+    except KeyError:
+        sql_query = 'SELECT Title, Body, Creator FROM Posts'
+        cursor.execute(sql_query)
+        results = cursor.fetchall()
+    finally:
+        sql_query = 'SELECT Title, Body, Creator FROM Posts'
+        cursor.execute(sql_query)
+        results = cursor.fetchall()
+        return render_template('index.html', posts=results)
+
 
 @app.route('/account')
 def account():
