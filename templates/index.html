@@ -34,15 +34,15 @@
     <main class='Site-content' style='padding:0px 100px;'>
         <h4>Recent Activity:</h4>
         <div id='posts'>
-            <form action='/' method='POST'>
+            <form action='/posts' method='POST'>
                 <input type='text' placeholder='Title' name='title'>
                 <input type='text' placeholder='Body' name='body'>
                 <input type='submit' value='Post'>
             </form>
             {% if posts %}
                 {% for post in posts %}
-                    {{ post[0] }} <br>
-                    {{ post[1] }} <br>
+                    {{ post[0] }}
+                    {{ post[1] }}
                     {{ post[2] }} <br>
                 {% endfor %}
             {% endif %}

@@ -49,6 +49,7 @@ def signup():
     get_database().commit() # Commits and stores the values in the database
     sql_query = 'SELECT ID FROM Users WHERE Username = ?'
     cursor.execute(sql_query, (new_username,))
+    global user_id
     user_id = cursor.fetchall()[0][0]
     session['logged_in'] = True # Sets the user's status as logged in
     return redirect(url_for('index'))
@@ -70,7 +71,7 @@ def login():
             session['logged_in'] = True # Sets the user's status as logged in
             global user_id
             user_id = results[0][0]
-            return index()
+            return redirect(url_for('index'))
     if username == '' and password == '': # Checks if nothing is inputted and doesn't show an error
         return redirect(url_for('index'))
     if username == '' or password == '':
@@ -91,19 +92,23 @@ def index():
     cursor = get_database().cursor()
     if 'logged_in' not in session:
         return render_template('login.html', error=None)
-    try: # Finds out if the input is for a post or for logging in
-        sql_query = 'INSERT INTO Posts (Title, Body, Creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
-        cursor.execute(sql_query, (request.form['title'], request.form['body'], user_id)) # Will raise KeyError if inputs are username and password instead of title and body
-        get_database().commit()
-    except KeyError:
-        sql_query = 'SELECT Title, Body, Creator FROM Posts'
-        cursor.execute(sql_query)
-        results = cursor.fetchall()
-    finally:
-        sql_query = 'SELECT Title, Body, Creator FROM Posts'
-        cursor.execute(sql_query)
-        results = cursor.fetchall()
-        return render_template('index.html', posts=results)
+    sql_query = 'SELECT Title, Body, Creator FROM Posts'
+    cursor.execute(sql_query)
+    results = cursor.fetchall()
+    return render_template('index.html', posts=results)
+
+@app.route('/posts', methods=['GET', 'POST'])
+def posts():
+    if 'logged_in' not in session:
+        return render_template('login.html', error=None)
+    cursor=get_database().cursor()
+    sql_query = 'INSERT INTO Posts (Title, Body, Creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
+    cursor.execute(sql_query, (request.form['title'], request.form['body'], user_id))
+    get_database().commit()
+    sql_query = 'SELECT Title, Body, Creator FROM Posts'
+    cursor.execute(sql_query)
+    results = cursor.fetchall()
+    return render_template('index.html', posts=results)
 
 
 @app.route('/account')
