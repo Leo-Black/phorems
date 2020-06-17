@@ -4,10 +4,10 @@ Phorem Flask Application
 """
 
 from sqlite3 import connect # Gives the ability to connect to sqlite3 databases
-from flask import Flask, g, redirect, render_template, request, url_for, session, flash, abort # Allows the use of Flask, g, redirecting, HTML templates and requesting
+from flask import Flask, g, redirect, url_for, render_template, request, session # Allows the use of Flask, g, redirecting with url_for, HTML templates, requesting and the session list
 from flask_login import LoginManager # Allows the use of logging in and out via the flask login manager
-from os import urandom
-from werkzeug.security import generate_password_hash, check_password_hash
+from os import urandom # Provides random bytes of a certain length
+from werkzeug.security import generate_password_hash, check_password_hash # Allows the use of hashing and checking hashed values
 
 app = Flask(__name__) # Initialises the app
 login = LoginManager(app) 
@@ -29,7 +29,7 @@ def close_connection(exception):
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    '''Allows users to sign up with a username and password if the username is unique and neither values are blank.'''
+    '''Allows users to sign up with a unique username and password.'''
     if request.method == 'GET': # Checks if values have not yet been inputted and redirects to the signup page if not
         return render_template('signup.html')
     error = None
@@ -49,7 +49,7 @@ def signup():
     get_database().commit() # Commits and stores the values in the database
     sql_query = 'SELECT ID FROM Users WHERE Username = ?'
     cursor.execute(sql_query, (new_username,))
-    global user_id
+    global user_id # Allows the variable user_id to be used anywhere in the program
     user_id = cursor.fetchall()[0][0]
     session['logged_in'] = True # Sets the user's status as logged in
     return redirect(url_for('index'))
@@ -69,7 +69,7 @@ def login():
     if bool(results): # Checks if the username entered is correct
         if check_password_hash(results[0][1], password): # Checks if the password entered is correct
             session['logged_in'] = True # Sets the user's status as logged in
-            global user_id
+            global user_id # Allows the variable user_id to be used anywhere in the program
             user_id = results[0][0]
             return redirect(url_for('index'))
     if username == '' and password == '': # Checks if nothing is inputted and doesn't show an error
@@ -88,27 +88,33 @@ def logout():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    '''Renders the HTML template 'index.html' as the home page if the user is logged in.'''
+    '''Renders the index page if the user is logged in.'''
+    if 'logged_in' not in session:
+        return render_template('login.html')
     cursor = get_database().cursor()
-    if 'logged_in' not in session:
-        return render_template('login.html', error=None)
-    sql_query = 'SELECT Title, Body, Creator FROM Posts'
+    sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID' # Gets the post's title, body text and author from the database
     cursor.execute(sql_query)
     results = cursor.fetchall()
-    return render_template('index.html', posts=results)
+    return render_template('index.html', posts=results) # Renders 'index.html' and prints the list of posts
 
-@app.route('/posts', methods=['GET', 'POST'])
+@app.route('/post/fail', methods=['GET', 'POST'])
 def posts():
+    '''Adds the inputted post to the database if both values are entered.'''
     if 'logged_in' not in session:
-        return render_template('login.html', error=None)
-    cursor=get_database().cursor()
+        return redirect(url_for('index'))
+    cursor = get_database().cursor()
+    title = request.form['title'] # Gets the inputted title value
+    body = request.form['post'] # Gets the inputted body text value
+    if title == '' or body == '': # Checks if either value were left blank
+        error = 'Please enter a title and body text.'
+        sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID' # Gets the post's title, body text and author from the database
+        cursor.execute(sql_query)
+        results = cursor.fetchall()
+        return render_template('index.html', posts=results, error=error)
     sql_query = 'INSERT INTO Posts (Title, Body, Creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
-    cursor.execute(sql_query, (request.form['title'], request.form['body'], user_id))
+    cursor.execute(sql_query, (title, body, user_id))
     get_database().commit()
-    sql_query = 'SELECT Title, Body, Creator FROM Posts'
-    cursor.execute(sql_query)
-    results = cursor.fetchall()
-    return render_template('index.html', posts=results)
+    return redirect(url_for('index'))
 
 
 @app.route('/account')

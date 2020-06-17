@@ -32,18 +32,27 @@
     <br>
 
     <main class='Site-content' style='padding:0px 100px;'>
-        <h4>Recent Activity:</h4>
+        <!-- Allows the user to create a new post -->
         <div id='posts'>
-            <form action='/posts' method='POST'>
+            <form action='/post/fail' method='POST'>
                 <input type='text' placeholder='Title' name='title'>
-                <input type='text' placeholder='Body' name='body'>
+                <input type='text' placeholder='Post' name='post'>
                 <input type='submit' value='Post'>
-            </form>
+            </form> <br>
+
+            <h4>Recent Activity:</h4>
+
+            <!-- Prints any errors if they exist -->
+            {% if error %}
+                <h3><p class='error' style='color: #000;'>{{ error }}</p></h3>
+            {% endif %}
+
+            <!-- Lists each previous post -->
             {% if posts %}
                 {% for post in posts %}
-                    {{ post[0] }}
-                    {{ post[1] }}
-                    {{ post[2] }} <br>
+                    Title: {{ post[0] }} <br>
+                    Post:  {{ post[1] }} <br>
+                    By:    {{ post[2] }} <br> <br>
                 {% endfor %}
             {% endif %}
         </div>

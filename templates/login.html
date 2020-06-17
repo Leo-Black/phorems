@@ -18,6 +18,7 @@
             <h1 class='display-3'>phorem.</h1>
         </div>
         <div class='col-1'>
+            <!-- Adds a signup button in the top right corner -->
             <form action='/signup' style='padding-top: 32.5px; padding-right: 5px;'>
                 <input type='submit' value='Sign Up'>
             </form>
@@ -27,13 +28,16 @@
     <hr style="width:95%;height:3px;background-color:#999;border-radius:3px;">
     <main class='Site-content'>
         {% block body %}
+            <!-- Checks if the user has already logged in -->
             {% if not session['logged_in'] %}
+                <!-- Allows the user to log in with their username and password -->
                 <form action='/login' method='POST' style='padding: 20px 45px;'>
                     <input type='username' placeholder='Username' name='username'>
                     <input type='password' placeholder='Password' name='password'>
                     <input type='submit' value='Log In'>
                 </form>
-
+                
+                <!-- Prints any errors if they exist -->
                 {% if error %}
                     <h3><p class='error' style='color: #000;'>{{ error }}</p></h3>
                 {% endif %}
