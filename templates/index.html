@@ -24,43 +24,52 @@
         <!-- Pushes the user icon to the far right -->
         <div class='col-1'>
             <!-- Adds a user icon with a link to the account settings page -->
-            <a href='/account'><img src='/static/user-icon.png' width='40px' style='padding-top: 32.5px;'></a>
+            <a href='/account'><img src='/static/user-icon.png' width='55px' style='padding-top: 25px;'></a>
         </div>
     </div>
-    <!-- Adds a horizontal line and a line break as a divider between the title and the bulk of the website -->
-    <hr style="width:95%;height:3px;background-color:#999;border-radius:3px;">
+    <!-- Adds a horizontal line as a divider between the title and the bulk of the website -->
+    <hr id='site-divider'>
     <br>
 
     <main class='Site-content' style='padding:0px 100px;'>
         <!-- Allows the user to create a new post -->
-        <div id='posts'>
+        <div id='input-post'>
             <form action='/post/fail' method='POST'>
                 <input type='text' placeholder='Title' name='title'>
                 <input type='text' placeholder='Post' name='post'>
                 <input type='submit' value='Post'>
             </form> <br>
-
-            <h4>Recent Activity:</h4>
-
-            <!-- Prints any errors if they exist -->
-            {% if error %}
-                <h3><p class='error' style='color: #000;'>{{ error }}</p></h3>
-            {% endif %}
-
-            <!-- Lists each previous post -->
-            {% if posts %}
-                {% for post in posts %}
-                    Title: {{ post[0] }} <br>
-                    Post:  {{ post[1] }} <br>
-                    By:    {{ post[2] }} <br> <br>
-                {% endfor %}
-            {% endif %}
         </div>
+
+        <h4 style='padding-left: 27.5%;'>Recent Activity:</h4> <br>
+
+        <!-- Prints any errors if they exist -->
+        {% if error %}
+            <h3><p class='error' style='color: #000;'>{{ error }}</p></h3>
+        {% endif %}
+
+        <!-- Lists each previous post -->
+        {% if posts %}
+            {% for post in posts %}
+                <div id='posts'>
+                    <div id='title'> <h4>
+                        {{ post[0] }} 
+                    </h4></div>
+                    <hr id='post-divider'>
+                    <div id='body'>
+                        {{ post[1] }} 
+                    </div>
+                    <div id='author'>
+                        <i>By: {{ post[2] }}</i>
+                    </div>
+                </div> <br>
+            {% endfor %}
+        {% endif %}
     </main>
 
     <footer style='padding: 30px 0px; text-align: center;'>
         <!-- Adds a horizontal line as a divider between the bulk of the website and the footer -->
-        <hr style="width:95%;height:3px;background-color:#888;border-radius:3px;">
+        <hr id='site-divider'>
         <!-- Sets the copyright text -->
         &copy Leo Black 2020
     </footer>

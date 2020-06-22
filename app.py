@@ -120,7 +120,7 @@ def posts():
 @app.route('/account')
 def account():
     '''Renders the HTML template 'account.html' if the user is logged in.'''
-    if 'logged_in' in session: # Checks if the user is logged in
+    if 'logged_in' in session:
         return render_template('account.html')
     return redirect(url_for('index'))
 
