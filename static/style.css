@@ -9,6 +9,7 @@
   flex: 1;
 }
 
+/* Modifies the horizontal lines at the top and bottom of the screen */
 #site-divider{
   width: 95%;
   height: 3px;
@@ -22,12 +23,49 @@ a {
   color: #000 !important;
 }
 
-#posts{
-  padding: 0px 10px;
-  overflow-wrap: break-word;
-  border: solid #777;
+#input-post{
+  border: solid #555;
   border-radius: 10px;
-  border-width: 3px;
+  padding: 10px 10px 0px;
+  width: 37.5%;
+  margin: 0px auto;
+}
+
+#input-title{
+  width: 99.5%;
+  background: none;
+  border: none;
+  outline: none;
+  font-weight: 500;
+}
+
+#input-body{
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0px 10px;
+}
+
+#submit-button{
+  margin-top: 12px;
+  background: #D4D4D4;
+  border: none;
+  outline: none;
+  float: right;
+  font-weight: 500;
+  color: black;
+  border-radius: 3px;
+}
+
+#posts{
+  /* Puts padding around the text*/
+  padding: 0px 10px;
+  /* Wraps text and keeps it in the box */
+  overflow-wrap: break-word;
+  border: solid #555;
+  border-radius: 10px;
+  /* Changes how wide the whole post is */
   width: 37.5%;
   margin: 0px auto;
 }
@@ -36,10 +74,11 @@ a {
   padding-top: 10px;
 }
 
+/* Modifies the horizontal line in each post. The rounded edges are more noticeable when zoomed in */
 #post-divider{
   height: 1px;
   background-color: #AAAAAA;
-  border-radius: 100px;
+  border-radius: 1px;
 }
 
 #body{
@@ -48,5 +87,6 @@ a {
 
 #author{
   text-align: right;
+  padding-right: 9px;
   padding-bottom: 10px;
 }

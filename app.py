@@ -92,12 +92,12 @@ def index():
     if 'logged_in' not in session:
         return render_template('login.html')
     cursor = get_database().cursor()
-    sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID' # Gets the post's title, body text and author from the database
+    sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
     cursor.execute(sql_query)
     results = cursor.fetchall()
     return render_template('index.html', posts=results) # Renders 'index.html' and prints the list of posts
 
-@app.route('/post/fail', methods=['GET', 'POST'])
+@app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function does more than just print an error page
 def posts():
     '''Adds the inputted post to the database if both values are entered.'''
     if 'logged_in' not in session:
