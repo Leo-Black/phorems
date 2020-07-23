@@ -92,7 +92,7 @@ def index():
     if 'logged_in' not in session:
         return render_template('login.html')
     cursor = get_database().cursor()
-    sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
+    sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
     cursor.execute(sql_query)
     results = cursor.fetchall()
     return render_template('index.html', posts=results) # Renders 'index.html' and prints the list of posts
@@ -107,7 +107,7 @@ def posts():
     body = request.form['post'] # Gets the inputted body text value
     if title == '' or body == '' or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
-        sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID' # Gets the post's title, body text and author from the database
+        sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID' # Gets the post's title, body text and author from the database
         cursor.execute(sql_query)
         results = cursor.fetchall()
         return render_template('index.html', posts=results, error=error)
@@ -115,7 +115,18 @@ def posts():
     cursor.execute(sql_query, (title, body, user_id))
     get_database().commit()
     return redirect(url_for('index'))
-
+    
+@app.route('/delete', methods=['GET','POST'])
+def delete():
+    if 'logged_in' not in session:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        cursor = get_database().cursor()
+        post_id = int(request.form['post_id'])
+        sql_query = 'DELETE FROM Posts WHERE ID = ?'
+        cursor.execute(sql_query, (post_id,))
+        get_database().commit()
+    return redirect(url_for('index'))
 
 @app.route('/account')
 def account():

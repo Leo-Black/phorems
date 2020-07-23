@@ -49,7 +49,7 @@
             <h3><p class='error' style='color: #000;text-align: center;'>{{ error }}</p></h3>
         {% endif %}
 
-        <br> <h4 style='padding-left: 27.5%;'>Recent Activity:</h4> <br>
+        <br> <h4 style='padding-left: 28.5%;'>Recent Activity:</h4> <br>
 
         <!-- Lists each previous post -->
         {% if posts %}
@@ -64,6 +64,12 @@
                     </div>
                     <div id='author'>
                         <i>By: {{ post[2] }}</i>
+                    </div>
+                    <div id='delete'>
+                        <form action='/delete' method='POST'>
+                            <input type='hidden' name='post_id' value='{{ post[3] }}'>
+                            <input type='submit' value='delete'>
+                        </form>
                     </div>
                 </div> <br>
             {% endfor %}
