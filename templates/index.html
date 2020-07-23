@@ -34,20 +34,22 @@
     <main class='Site-content' style='padding:0px 100px;'>
         <!-- Allows the user to create a new post -->
         <div id='input-post'>
-            <form action='/post/fail' method='POST'>
-                <h4><input type='text' placeholder='Enter Title' name='title' id='input-title'></h4>
+            <form action='/post/fail' method='POST' id='post'>
+                <!-- Makes the title text bold and wraps the text -->
+                <h4><textarea rows='1' placeholder='Enter Title' name='title' id='input-title' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + 1 + "px"'></textarea></h4>
                 <hr id='post-divider'>
-                <input type='text' placeholder='Enter Body' name='post' id='input-body'> <br>
+                <!-- Wraps the body text -->
+                <textarea rows='1' placeholder='Enter Body' name='post' id='input-body' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea><br>
                 <input type='submit' value='Post' id='submit-button'> <br>
             </form> <br>
-        </div> <br> <br>
+        </div> <br>
 
         <!-- Prints any errors if they exist -->
         {% if error %}
-            <h3><p class='error' style='color: #000;'>{{ error }}</p></h3>
+            <h3><p class='error' style='color: #000;text-align: center;'>{{ error }}</p></h3>
         {% endif %}
 
-        <h4 style='padding-left: 27.5%;'>Recent Activity:</h4> <br>
+        <br> <h4 style='padding-left: 27.5%;'>Recent Activity:</h4> <br>
 
         <!-- Lists each previous post -->
         {% if posts %}

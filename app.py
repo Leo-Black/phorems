@@ -105,8 +105,8 @@ def posts():
     cursor = get_database().cursor()
     title = request.form['title'] # Gets the inputted title value
     body = request.form['post'] # Gets the inputted body text value
-    if title == '' or body == '': # Checks if either value were left blank
-        error = 'Please enter a title and body text.'
+    if title == '' or body == '' or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
+        error = 'Please enter a valid title and body text.'
         sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID' # Gets the post's title, body text and author from the database
         cursor.execute(sql_query)
         results = cursor.fetchall()

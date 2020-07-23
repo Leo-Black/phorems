@@ -32,19 +32,23 @@ a {
 }
 
 #input-title{
+  overflow: hidden;
   width: 99.5%;
   background: none;
   border: none;
   outline: none;
   font-weight: 500;
+  resize: none;
 }
 
 #input-body{
+  overflow: hidden;
   width: 100%;
   background: none;
   border: none;
   outline: none;
   padding: 0px 10px;
+  resize: none;
 }
 
 #submit-button{
