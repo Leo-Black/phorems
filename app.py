@@ -74,8 +74,8 @@ def login():
             return redirect(url_for('index'))
     if username == '' and password == '': # Checks if nothing is inputted and doesn't show an error
         return redirect(url_for('index'))
-    if username == '' or password == '':
-        error = 'Please enter a username and a password.' # Checks if nothing is inputted in one of the values
+    if username == '' or password == '' or username.isspace():
+        error = 'Please enter a valid username and password.' # Checks if nothing is inputted in one of the values or if the username is just whitespace
         return render_template('login.html', error=error)
     error = 'Incorrect Credentials'
     return render_template('login.html', error=error) # Starts again and flashes the error message
@@ -92,10 +92,10 @@ def index():
     if 'logged_in' not in session:
         return render_template('login.html')
     cursor = get_database().cursor()
-    sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
+    sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
     cursor.execute(sql_query)
     results = cursor.fetchall()
-    return render_template('index.html', posts=results) # Renders 'index.html' and prints the list of posts
+    return render_template('index.html', posts=results, user_id=user_id) # Renders 'index.html' and prints the list of posts
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function does more than just print an error page
 def posts():
@@ -107,10 +107,10 @@ def posts():
     body = request.form['post'] # Gets the inputted body text value
     if title == '' or body == '' or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
-        sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID' # Gets the post's title, body text and author from the database
+        sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID' # Gets the post's title, body text and author from the database
         cursor.execute(sql_query)
         results = cursor.fetchall()
-        return render_template('index.html', posts=results, error=error)
+        return render_template('index.html', posts=results, error=error, user_id=user_id)
     sql_query = 'INSERT INTO Posts (Title, Body, Creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
     cursor.execute(sql_query, (title, body, user_id))
     get_database().commit()

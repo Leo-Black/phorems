@@ -66,10 +66,12 @@
                         <i>By: {{ post[2] }}</i>
                     </div>
                     <div id='delete'>
-                        <form action='/delete' method='POST'>
-                            <input type='hidden' name='post_id' value='{{ post[3] }}'>
-                            <input type='submit' value='delete'>
-                        </form>
+                        {% if post[4] == user_id %}
+                            <form action='/delete' method='POST'>
+                                <input type='hidden' name='post_id' value='{{ post[3] }}'>
+                                <input type='submit' value='delete'>
+                            </form>
+                        {% endif %}
                     </div>
                 </div> <br>
             {% endfor %}
