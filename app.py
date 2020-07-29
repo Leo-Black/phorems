@@ -103,11 +103,14 @@ def posts():
     if 'logged_in' not in session:
         return redirect(url_for('index'))
     cursor = get_database().cursor()
-    title = request.form['title'] # Gets the inputted title value
-    body = request.form['post'] # Gets the inputted body text value
+    try:
+        title = request.form['title'] # Gets the inputted title value
+        body = request.form['post'] # Gets the inputted body text value
+    except KeyError: # Checks if the user typed in the post/fail url without submitting any values
+        return redirect(url_for('index'))
     if title == '' or body == '' or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
-        sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID' # Gets the post's title, body text and author from the database
+        sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database
         cursor.execute(sql_query)
         results = cursor.fetchall()
         return render_template('index.html', posts=results, error=error, user_id=user_id)
