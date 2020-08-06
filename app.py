@@ -10,7 +10,7 @@ from os import urandom # Provides random bytes of a certain length
 from werkzeug.security import generate_password_hash, check_password_hash # Allows the use of hashing and checking hashed values
 
 app = Flask(__name__) # Initialises the app
-login = LoginManager(app) 
+login = LoginManager(app) # Handles whether or not the user is logged in
 
 def get_database():
     '''Connects to the database 'database.db' using getattr and returns the connection. If the database is not found, it connects manually.'''
@@ -92,7 +92,7 @@ def index():
     if 'logged_in' not in session:
         return render_template('login.html')
     cursor = get_database().cursor()
-    sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
+    sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
     cursor.execute(sql_query)
     results = cursor.fetchall()
     return render_template('index.html', posts=results, user_id=user_id) # Renders 'index.html' and prints the list of posts
@@ -103,32 +103,33 @@ def posts():
     if 'logged_in' not in session:
         return redirect(url_for('index'))
     cursor = get_database().cursor()
-    try:
+    try: # Checks if the user typed in the post/fail url without submitting any values
         title = request.form['title'] # Gets the inputted title value
         body = request.form['post'] # Gets the inputted body text value
-    except KeyError: # Checks if the user typed in the post/fail url without submitting any values
+    except KeyError:
         return redirect(url_for('index'))
     if title == '' or body == '' or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
-        sql_query = 'SELECT Posts.Title, Posts.Body, Users.Username, Posts.ID, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database
+        sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database
         cursor.execute(sql_query)
         results = cursor.fetchall()
         return render_template('index.html', posts=results, error=error, user_id=user_id)
     sql_query = 'INSERT INTO Posts (Title, Body, Creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
     cursor.execute(sql_query, (title, body, user_id))
-    get_database().commit()
+    get_database().commit() # Saves the new post in the database
     return redirect(url_for('index'))
     
 @app.route('/delete', methods=['GET','POST'])
 def delete():
-    if 'logged_in' not in session:
+    '''Allows users to delete their own posts after confirmation.'''
+    if 'logged_in' not in session: # Sends users back to the login page if they haven't signed in
         return redirect(url_for('index'))
     if request.method == 'POST':
         cursor = get_database().cursor()
-        post_id = int(request.form['post_id'])
+        post_id = int(request.form['post_id']) # Gets the ID of the specified post to delete
         sql_query = 'DELETE FROM Posts WHERE ID = ?'
         cursor.execute(sql_query, (post_id,))
-        get_database().commit()
+        get_database().commit() # Saves the change to the database
     return redirect(url_for('index'))
 
 @app.route('/account')

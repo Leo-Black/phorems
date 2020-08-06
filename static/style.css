@@ -23,6 +23,7 @@ a {
   color: #000 !important;
 }
 
+/* Styles the post input box to match previous posts */
 #input-post{
   border: solid #555;
   border-radius: 10px;
@@ -31,6 +32,7 @@ a {
   margin: 0px auto;
 }
 
+/* Styles the title input box to remove resizing and wrap text onto new lines */
 #input-title{
   overflow: hidden;
   width: 99.5%;
@@ -51,8 +53,10 @@ a {
   resize: none;
 }
 
+/* Styles the submit post button and places it in the bottom right corner */
 #submit-button{
-  margin-top: 12px;
+  margin-top: 16px;
+  margin-right: -3px;
   background: #D4D4D4;
   border: none;
   outline: none;
@@ -60,8 +64,10 @@ a {
   font-weight: 500;
   color: black;
   border-radius: 3px;
+  width: 60px;
 }
 
+/* Syles each previous post */
 #posts{
   /* Puts padding around the text*/
   padding: 0px 10px;
@@ -69,7 +75,6 @@ a {
   overflow-wrap: break-word;
   border: solid #555;
   border-radius: 10px;
-  /* Changes how wide the whole post is */
   width: 37.5%;
   margin: 0px auto;
 }
@@ -78,7 +83,7 @@ a {
   padding-top: 10px;
 }
 
-/* Modifies the horizontal line in each post. The rounded edges are more noticeable when zoomed in */
+/* Modifies the horizontal line in each post */
 #post-divider{
   height: 1px;
   background-color: #AAAAAA;
@@ -89,8 +94,22 @@ a {
   padding: 0px 10px;
 }
 
+/* Places the creator's name in the bottom right corner */
 #author{
   text-align: right;
   padding-right: 9px;
   padding-bottom: 10px;
+}
+
+/* Places a delete post button at the bottom right corner of posts the user has made and styles it to look like the submit post button */
+#delete-button{
+  margin: -32px -3px;
+  background: #D4D4D4;
+  border: none;
+  outline: none;
+  float: right;
+  font-weight: 500;
+  color: black;
+  border-radius: 3px;
+  width: 60px;
 }
