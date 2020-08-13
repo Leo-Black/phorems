@@ -37,10 +37,11 @@
         <div id='input-post'>
             <form action='/post/fail' method='POST' id='post'>
                 <!-- Makes the title text bold and wraps the text -->
-                <h4><textarea rows='1' placeholder='Enter Title' name='title' id='input-title' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + 1 + "px"'></textarea></h4>
+                <h4><textarea rows='1' placeholder='Enter Title' name='title' id='input-title' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea></h4>
                 <hr id='post-divider'>
                 <!-- Wraps the body text -->
-                <textarea rows='1' placeholder='Enter Body' name='post' id='input-body' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea><br>
+                <textarea rows='1' placeholder='Enter Body' name='post' id='input-body' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                <textarea rows='1' placeholder='Tags (optional, separate by space)' name='tags' id='input-tags' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
                 <input type='submit' value='Post' id='submit-button'> <br>
             </form> <br>
         </div> <br>
@@ -62,16 +63,21 @@
                     </h4></div>
                     <!-- Line break -->
                     <hr id='post-divider'>
-                    <!-- Post's body text -->
+                    <!-- Post's body text (and tags if applicable) -->
                     <div id='body'>
                         {{ post[2] }} 
+                        <!-- Checks if the post has any tags -->
+                        {% if post[3] %}
+                            <!-- Adds tags onto the end of the body text in bold and formats them into a list -->
+                            <strong>- {{ ', '.join(post[3].split(' ')) }}</strong>
+                        {% endif %}
                     </div>
                     <!-- Post's creator -->
                     <div id='author'>
-                        <i>By: <strong>{{ post[3] }}</strong> </i>
+                        <i>By: <strong>{{ post[4] }}</strong> </i>
                     </div>
                     <!-- Checks if the post was created by the user that logged in -->
-                    {% if post[4] == user_id %}
+                    {% if post[5] == user_id %}
                         <br>
                         <!-- Allows users to delete their own posts -->
                         <div id='delete'>

@@ -92,12 +92,12 @@ def index():
     if 'logged_in' not in session:
         return render_template('login.html')
     cursor = get_database().cursor()
-    sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
+    sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Posts.Tags, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
     cursor.execute(sql_query)
     results = cursor.fetchall()
     return render_template('index.html', posts=results, user_id=user_id) # Renders 'index.html' and prints the list of posts
 
-@app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function does more than just print an error page
+@app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
 def posts():
     '''Adds the inputted post to the database if both values are entered.'''
     if 'logged_in' not in session:
@@ -106,16 +106,21 @@ def posts():
     try: # Checks if the user typed in the post/fail url without submitting any values
         title = request.form['title'] # Gets the inputted title value
         body = request.form['post'] # Gets the inputted body text value
+        tags = request.form['tags'] # Gets the inputted tags values (if added)
     except KeyError:
         return redirect(url_for('index'))
     if title == '' or body == '' or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
-        sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database
+        sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Posts.Tags, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database
         cursor.execute(sql_query)
         results = cursor.fetchall()
         return render_template('index.html', posts=results, error=error, user_id=user_id)
-    sql_query = 'INSERT INTO Posts (Title, Body, Creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
-    cursor.execute(sql_query, (title, body, user_id))
+    if bool(tags): # Checks if there are any tags on the post
+        sql_query = 'INSERT INTO Posts (Title, Body, Creator, tags) VALUES (?,?,?,?)' # Adds a post with a title, body text, author and tags value into the database
+        cursor.execute(sql_query, (title, body, user_id, tags))
+    else:
+        sql_query = 'INSERT INTO Posts (Title, Body, Creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
+        cursor.execute(sql_query, (title, body, user_id))
     get_database().commit() # Saves the new post in the database
     return redirect(url_for('index'))
     

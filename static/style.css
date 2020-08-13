@@ -53,6 +53,17 @@ a {
   resize: none;
 }
 
+#input-tags{
+  overflow: hidden;
+  width: 50%;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0px 10px;
+  resize: none;
+  vertical-align: bottom;
+}
+
 /* Styles the submit post button and places it in the bottom right corner */
 #submit-button{
   margin-top: 16px;
