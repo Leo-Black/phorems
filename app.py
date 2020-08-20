@@ -12,6 +12,18 @@ from werkzeug.security import generate_password_hash, check_password_hash # Allo
 app = Flask(__name__) # Initialises the app
 login = LoginManager(app) # Handles whether or not the user is logged in
 
+def get_posts(filter_by=None):
+    '''Gets the important values for each post in the database, putting the most recent post first and filtering by tags if specified.'''
+    cursor = get_database().cursor()
+    if bool(filter_by):
+        sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Posts.Tags, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID WHERE Posts.Tags LIKE ? ORDER BY Posts.ID DESC'
+        cursor.execute(sql_query, (''.join(('%', filter_by, '%')),)) # Executes the SQL query and checks if the tag is anywhere in the list of tags
+    else:
+        sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Posts.Tags, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC'
+        cursor.execute(sql_query)
+    results = cursor.fetchall()
+    return results
+
 def get_database():
     '''Connects to the database 'database.db' using getattr and returns the connection. If the database is not found, it connects manually.'''
     database_connection = getattr(g, '_database', None)
@@ -91,11 +103,8 @@ def index():
     '''Renders the index page if the user is logged in.'''
     if 'logged_in' not in session:
         return render_template('login.html')
-    cursor = get_database().cursor()
-    sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Posts.Tags, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database, putting the most recent post first
-    cursor.execute(sql_query)
-    results = cursor.fetchall()
-    return render_template('index.html', posts=results, user_id=user_id) # Renders 'index.html' and prints the list of posts
+    post_list = get_posts()
+    return render_template('index.html', posts=post_list, user_id=user_id) # Renders 'index.html' and prints the list of posts
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
 def posts():
@@ -111,11 +120,9 @@ def posts():
         return redirect(url_for('index'))
     if title == '' or body == '' or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
-        sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Posts.Tags, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC' # Gets the post's title, body text and author from the database
-        cursor.execute(sql_query)
-        results = cursor.fetchall()
-        return render_template('index.html', posts=results, error=error, user_id=user_id)
-    if bool(tags): # Checks if there are any tags on the post
+        post_list = get_posts()
+        return render_template('index.html', posts=post_list, error=error, user_id=user_id)
+    if bool(tags) and not tags.isspace(): # Checks if there are any tags on the post
         sql_query = 'INSERT INTO Posts (Title, Body, Creator, tags) VALUES (?,?,?,?)' # Adds a post with a title, body text, author and tags value into the database
         cursor.execute(sql_query, (title, body, user_id, tags))
     else:
@@ -143,6 +150,14 @@ def account():
     if 'logged_in' in session:
         return render_template('account.html')
     return redirect(url_for('index'))
+
+@app.route('/filter-by-<tag>')
+def tag_filter(tag):
+    '''Lists all posts under a certain tag.'''
+    if 'logged_in' not in session:
+        return redirect(url_for('index'))
+    post_list = get_posts(tag)
+    return render_template('filter.html', tag=tag, posts=post_list, user_id=user_id)
 
 if __name__ == '__main__': # Runs the application and sets the secret key to a random 12 byte object
     app.secret_key = urandom(12)

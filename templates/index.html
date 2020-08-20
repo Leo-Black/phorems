@@ -19,7 +19,7 @@
     <div class='row'>
         <div class='col-sm-11'>
             <!-- Sets the title in display text -->
-            <h1 class='display-3'><a href='/'>phorem.</a></h1>
+            <h1 class='display-3'><a id='home' href='/'>phorem.</a></h1>
         </div>
         <!-- Pushes the user icon to the far right -->
         <div class='col-1'>
@@ -68,8 +68,15 @@
                         {{ post[2] }} 
                         <!-- Checks if the post has any tags -->
                         {% if post[3] %}
+                            <!-- Adds a dash in bold to separate the body text from the tags-->
+                            <strong>- </strong>
                             <!-- Adds tags onto the end of the body text in bold and formats them into a list -->
-                            <strong>- {{ ', '.join(post[3].split(' ')) }}</strong>
+                            {% for tag in post[3].split(' ')[:-1] %}
+                                <input type='hidden' name='tag_id' value='{{ tag }}'>
+                                <a id='tags' href='/filter-by-{{ tag }}'>{{ tag }}</a><strong>,</strong>
+                            {% endfor %}
+                            <!-- Adds the last tag on without a comma afterward -->
+                            <a id='tags' href="/filter-by-{{ post[3].split(' ')[-1] }}">{{ post[3].split(' ')[-1] }}</a>
                         {% endif %}
                     </div>
                     <!-- Post's creator -->

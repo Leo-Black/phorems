@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Sets up basic attributes of the website -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Sets the text displayed on the website tab -->
+    <title>Phorem</title>
+    <!-- Links to style.css, bootstrap, jquery and popper.js -->
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</head>
+
+<!-- Adds padding of 30px on the left and right -->
+<body class='Site' style="padding: 0px 30px;">
+    <div class='row'>
+        <div class='col-sm-11'>
+            <!-- Sets the title in display text -->
+            <h1 class='display-3'><a id='home' href='/'>phorem.</a></h1>
+        </div>
+        <!-- Pushes the user icon to the far right -->
+        <div class='col-1'>
+            <!-- Adds a user icon with a link to the account settings page -->
+            <a href='/account'><img src='/static/user-icon.png' width='55px' style='padding-top: 25px;'></a>
+        </div>
+    </div>
+    <!-- Adds a horizontal line as a divider between the title and the bulk of the website -->
+    <hr id='site-divider'>
+    <br>
+
+    <main class='Site-content' style='padding:0px 100px;'>
+    <br> <h2 style='text-align: center;'>Posts With Tag '{{ tag }}'</h2> <br>
+    <!-- Lists each previous post -->
+    {% if posts %}
+        {% for post in posts %}
+            <div id='posts'>
+                <!-- Post's title -->
+                <div id='title'> <h4>
+                    {{ post[1] }} 
+                </h4></div>
+                <!-- Line break -->
+                <hr id='post-divider'>
+                <!-- Post's body text (and tags if applicable) -->
+                <div id='body'>
+                    {{ post[2] }} 
+                    <!-- Checks if the post has any tags -->
+                    {% if post[3] %}
+                        <!-- Adds a dash in bold to separate the body text from the tags-->
+                        <strong>- </strong>
+                        <!-- Adds tags onto the end of the body text in bold and formats them into a list -->
+                        {% for tag in post[3].split(' ')[:-1] %}
+                            <input type='hidden' name='tag_id' value='{{ tag }}'>
+                            <a id='tags' href='/filter-by-{{ tag }}'>{{ tag }}</a><strong>,</strong>
+                        {% endfor %}
+                        <!-- Adds the last tag on without a comma afterward -->
+                        <a id='tags' href="/filter-by-{{ post[3].split(' ')[-1] }}">{{ post[3].split(' ')[-1] }}</a>
+                    {% endif %}
+                </div>
+                <!-- Post's creator -->
+                <div id='author'>
+                    <i>By: <strong>{{ post[4] }}</strong> </i>
+                </div>
+                <!-- Checks if the post was created by the user that logged in -->
+                {% if post[5] == user_id %}
+                    <br>
+                    <!-- Allows users to delete their own posts -->
+                    <div id='delete'>
+                        <form action='/delete' method='POST' onSubmit="return confirm('Are you sure?');">
+                            <input type='hidden' name='post_id' value='{{ post[0] }}'>
+                            <input type='submit' id='delete-button' value='Delete'>
+                        </form>
+                    </div>
+                {% endif %}
+            </div> <br>
+        {% endfor %}
+    {% endif %}
+    </main>
+
+    <footer style='padding: 30px 0px; text-align: center;'>
+        <!-- Adds a horizontal line as a divider between the bulk of the website and the footer -->
+        <hr id='site-divider'>
+        <!-- Sets the copyright text -->
+        &copy Leo Black 2020
+    </footer>
+</body>
+</html>

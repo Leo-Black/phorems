@@ -17,8 +17,8 @@
   border-radius: 3px;
 }
 
-/* Sets links to black and to not change colour or be underlined when hovered over */
-a {
+/* Sets the phorem logo to black and to not change colour or be underlined when hovered over */
+#home {
   text-decoration: none !important;
   color: #000 !important;
 }
@@ -55,7 +55,7 @@ a {
 
 #input-tags{
   overflow: hidden;
-  width: 50%;
+  width: 90%;
   background: none;
   border: none;
   outline: none;
@@ -123,4 +123,9 @@ a {
   color: black;
   border-radius: 3px;
   width: 60px;
+}
+
+#tags{
+  font-weight: 650;
+  color: black;
 }
