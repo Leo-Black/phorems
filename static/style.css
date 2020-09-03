@@ -55,7 +55,7 @@
 
 #input-tags{
   overflow: hidden;
-  width: 90%;
+  width: 80%;
   background: none;
   border: none;
   outline: none;
@@ -88,6 +88,58 @@
   border-radius: 10px;
   width: 37.5%;
   margin: 0px auto;
+}
+
+/* The @media queries modify the post width on smaller/zoomed in screens */
+@media (max-width: 1300px) {
+  #posts, #input-post {
+    width: 45%;
+  }
+  #input-tags{
+    width: 70%;
+  }
+}
+
+@media (max-width: 1200px) {
+  #posts, #input-post {
+    width: 55%;
+  }
+ }
+
+@media (max-width: 1000px) {
+  #posts, #input-post {
+    width: 65%;
+  }
+}
+
+@media (max-width: 800px) {
+  #posts, #input-post {
+    width: 80%;
+  }
+}
+
+@media (max-width: 700px) {
+  #posts, #input-post {
+    width: 100%;
+  }
+  #input-tags{
+    height: 45px;
+  }
+}
+
+/* Widths larger than 100% need to be centred by modifying the margin */
+@media (max-width: 600px) {
+  #posts, #input-post {
+    width: 150%;
+    margin-left: -50px;
+  }
+}
+
+@media (max-width: 400px) {
+  #posts, #input-post {
+    width: 250%;
+    margin-left: -90px;
+  }
 }
 
 #title{
