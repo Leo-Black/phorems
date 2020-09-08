@@ -21,11 +21,10 @@
             <!-- Sets the title in display text -->
             <h1 class='display-3'><a id='home' href='/'>phorem.</a></h1>
         </div>
-        <!-- Pushes the user icon to the far right -->
-        <div class='col-1'>
-            <!-- Adds a user icon with a link to the account settings page -->
-            <a href='/account'><img src='/static/user-icon.png' width='55px' style='padding-top: 25px;'></a>
-        </div>
+        <!-- Puts a logout button in the far right -->
+        <form action="/logout">
+            <input type="submit" id='logout-button' value="Log Out">
+        </form>
     </div>
     <!-- Adds a horizontal line as a divider between the title and the bulk of the website -->
     <hr id='site-divider'>

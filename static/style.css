@@ -23,6 +23,20 @@
   color: #000 !important;
 }
 
+/* Styles the logout button */
+#logout-button{
+  margin-top: 45px;
+  background: #D4D4D4;
+  border: none;
+  outline: none;
+  float: right;
+  font-weight: 650;
+  color: black;
+  border-radius: 3px;
+  height: 30px;
+  width: 80px;
+}
+
 /* Styles the post input box to match previous posts */
 #input-post{
   border: solid #555;
