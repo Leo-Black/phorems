@@ -19,8 +19,8 @@
         </div>
         <div class='col-1'>
             <!-- Adds a signup button in the top right corner -->
-            <form action='/signup' style='padding-top: 45px;'>
-                <input type='submit' value='Sign Up'>
+            <form action='/signup'>
+                <input type='submit' id='signup-button' value='Sign Up'>
             </form>
         </div>
     </div>
@@ -30,16 +30,17 @@
         {% block body %}
             <!-- Checks if the user has already logged in -->
             {% if not session['logged_in'] %}
+                <h1><p style='color: #000; text-align: center;'>Log In</p></h3>
                 <!-- Allows the user to log in with their username and password -->
-                <form action='/login' method='POST' style='padding: 20px 45px;'>
+                <form action='/login' method='POST' style='padding: 20px 45px; text-align: center;'>
                     <input type='username' placeholder='Username' name='username'>
                     <input type='password' placeholder='Password' name='password'>
-                    <input type='submit' value='Log In'>
+                    <input type='submit' id='login-submit-button' value='Log In'>
                 </form>
                 
                 <!-- Prints any errors if they exist -->
                 {% if error %}
-                    <h3><p class='error' style='color: #000;'>{{ error }}</p></h3>
+                    <h3><p class='error' style='color: #000;text-align:center;'>{{ error }}</p></h3>
                 {% endif %}
             {% endif %}
         {% endblock %}

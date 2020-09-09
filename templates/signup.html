@@ -19,19 +19,20 @@
         </div>
         <div class='col-1'>
             <!-- Adds a login button in the top right corner -->
-            <form action='/login' style='padding-top: 32.5px; padding-right: 5px;'>
-                <input type='submit' value='Log In'>
+            <form action='/login'>
+                <input type='submit' id='login-button' value='Log In'>
             </form>
         </div>
     </div>
     <!-- Adds a horizontal line and a line break as a divider between the title and the login section -->
     <hr style="width:95%;height:3px;background-color:#999;border-radius:3px;">
     <main class='Site-content'>
+        <h1><p style='color: #000; text-align: center;'>Register</p></h3>
         <!-- Allows the user to create a new account with a unique username and password -->
-        <form action='/signup' method='POST' style='padding: 20px 45px;'>
+        <form action='/signup' method='POST' style='padding: 20px 0px;text-align: center;'>
             <input type='username' placeholder='Username' name='username'>
             <input type='password' placeholder='Password' name='password'>
-            <input type='submit' value='Register'>
+            <input type='submit' id='register-button' value='Register'>
         </form>
 
         <!-- Prints any errors if they exist -->
