@@ -158,6 +158,9 @@
     width: 150%;
     margin-left: -50px;
   }
+  #input-title{
+    height: 60px;
+  }
 }
 
 @media (max-width: 400px) {
