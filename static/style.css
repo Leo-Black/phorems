@@ -161,12 +161,18 @@
   #input-title{
     height: 60px;
   }
+  #login-button{
+    margin-right: -100px;
+  }
 }
 
 @media (max-width: 400px) {
   #posts, #input-post {
     width: 250%;
     margin-left: -90px;
+  }
+  #signup-button, #login-button{
+    margin-right: -100px;
   }
 }
 
