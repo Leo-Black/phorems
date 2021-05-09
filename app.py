@@ -1,6 +1,6 @@
 """
 Leo Black
-Phorem Flask Application
+Phorems Flask Application
 """
 
 from sqlite3 import connect # Gives the ability to connect to sqlite3 databases
