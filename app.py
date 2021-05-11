@@ -10,16 +10,20 @@ from os import urandom # Provides random bytes of a certain length
 from werkzeug.security import generate_password_hash, check_password_hash # Allows the use of hashing and checking hashed values
 
 app = Flask(__name__) # Initialises the app
-login = LoginManager(app) # Handles whether or not the user is logged in
+login_manager = LoginManager(app) # Handles whether or not the user is logged in
+
+@login_manager.user_loader
+def load_user(user_id):
+    return
 
 def get_posts(filter_by=None):
     '''Gets the important values for each post in the database, putting the most recent post first and filtering by tags if specified.'''
     cursor = get_database().cursor()
     if bool(filter_by):
-        sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Posts.Tags, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID WHERE Posts.Tags LIKE ? ORDER BY Posts.ID DESC'
+        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tags, User.username, User.id FROM Post INNER JOIN User ON Post.creator = User.id WHERE Post.tags LIKE ? ORDER BY Post.id DESC'
         cursor.execute(sql_query, (''.join(('%', filter_by, '%')),)) # Executes the SQL query and checks if the tag is anywhere in the list of tags
     else:
-        sql_query = 'SELECT Posts.ID, Posts.Title, Posts.Body, Posts.Tags, Users.Username, Users.ID FROM Posts INNER JOIN Users ON Posts.Creator = Users.ID ORDER BY Posts.ID DESC'
+        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tags, User.username, User.id FROM Post INNER JOIN User ON Post.creator = User.id ORDER BY Post.id DESC'
         cursor.execute(sql_query)
     results = cursor.fetchall()
     return results
@@ -51,15 +55,15 @@ def signup():
     if new_username == '' or new_password == '': # Checks if either the username or password are left blank
         error = 'Please enter a username and a password.'
         return render_template('signup.html', error=error) # Starts again, showing the error message
-    sql_query = 'SELECT Username FROM Users WHERE Username = ?' # Returns all users with the same username inputted
+    sql_query = 'SELECT username FROM User WHERE username = ?' # Returns all users with the same username inputted
     cursor.execute(sql_query, (new_username,))
     if bool(cursor.fetchall()): # Finds if there are any other users in the database with the same username
         error = 'Username already taken. Please try again.'
         return render_template('signup.html', error=error)
-    sql_query = 'INSERT INTO Users (Username, Password) VALUES (?,?)' # Adds the username and password into the database
+    sql_query = 'INSERT INTO User (username, password) VALUES (?,?)' # Adds the username and password into the database
     cursor.execute(sql_query, (new_username, generate_password_hash(new_password, 'SHA256'))) # Executes the query and hashes the password using the method SHA256
     get_database().commit() # Commits and stores the values in the database
-    sql_query = 'SELECT ID FROM Users WHERE Username = ?'
+    sql_query = 'SELECT id FROM User WHERE username = ?'
     cursor.execute(sql_query, (new_username,))
     global user_id # Allows the variable user_id to be used anywhere in the program
     user_id = cursor.fetchall()[0][0]
@@ -75,7 +79,7 @@ def login():
     cursor = get_database().cursor() # Sets up the SQL cursor
     username = request.form['username'] # Gets the inputted username value
     password = request.form['password'] # Gets the inputted password value
-    sql_query = 'SELECT ID, Password FROM Users WHERE Username = ?' # Returns the user with the inputted username value
+    sql_query = 'SELECT id, password FROM User WHERE username = ?' # Returns the user with the inputted username value
     cursor.execute(sql_query, (username,))
     results = cursor.fetchall()
     if bool(results): # Checks if the username entered is correct
@@ -123,10 +127,10 @@ def posts():
         post_list = get_posts()
         return render_template('index.html', posts=post_list, error=error, user_id=user_id)
     if bool(tags) and not tags.isspace(): # Checks if there are any tags on the post
-        sql_query = 'INSERT INTO Posts (Title, Body, Creator, tags) VALUES (?,?,?,?)' # Adds a post with a title, body text, author and tags value into the database
+        sql_query = 'INSERT INTO Post (title, body, creator, tags) VALUES (?,?,?,?)' # Adds a post with a title, body text, author and tags value into the database
         cursor.execute(sql_query, (title, body, user_id, tags))
     else:
-        sql_query = 'INSERT INTO Posts (Title, Body, Creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
+        sql_query = 'INSERT INTO Post (title, body, creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
         cursor.execute(sql_query, (title, body, user_id))
     get_database().commit() # Saves the new post in the database
     return redirect(url_for('index'))
@@ -139,7 +143,7 @@ def delete():
     if request.method == 'POST':
         cursor = get_database().cursor()
         post_id = int(request.form['post_id']) # Gets the ID of the specified post to delete
-        sql_query = 'DELETE FROM Posts WHERE ID = ?'
+        sql_query = 'DELETE FROM Post WHERE id = ?'
         cursor.execute(sql_query, (post_id,))
         get_database().commit() # Saves the change to the database
     return redirect(url_for('index'))
@@ -157,7 +161,7 @@ def tag_filter(tag):
     if 'logged_in' not in session:
         return redirect(url_for('index'))
     post_list = get_posts(tag)
-    return render_template('filter.html', tag=tag, posts=post_list, user_id=user_id)
+    return render_template('filter.html', tag=tag.lower(), posts=post_list, user_id=user_id)
 
 if __name__ == '__main__': # Runs the application and sets the secret key to a random 12 byte object
     app.secret_key = urandom(12)
