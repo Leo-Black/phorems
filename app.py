@@ -20,10 +20,10 @@ def get_posts(filter_by=None):
     '''Gets the important values for each post in the database, putting the most recent post first and filtering by tags if specified.'''
     cursor = get_database().cursor()
     if bool(filter_by):
-        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tags, User.username, User.id FROM Post INNER JOIN User ON Post.creator = User.id WHERE Post.tags LIKE ? ORDER BY Post.id DESC'
+        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tag, User.username, User.id FROM Post INNER JOIN User ON Post.author = User.id WHERE Post.tag LIKE ? ORDER BY Post.id DESC'
         cursor.execute(sql_query, (''.join(('%', filter_by, '%')),)) # Executes the SQL query and checks if the tag is anywhere in the list of tags
     else:
-        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tags, User.username, User.id FROM Post INNER JOIN User ON Post.creator = User.id ORDER BY Post.id DESC'
+        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tag, User.username, User.id FROM Post INNER JOIN User ON Post.author = User.id ORDER BY Post.id DESC'
         cursor.execute(sql_query)
     results = cursor.fetchall()
     return results
@@ -127,10 +127,10 @@ def posts():
         post_list = get_posts()
         return render_template('index.html', posts=post_list, error=error, user_id=user_id)
     if bool(tags) and not tags.isspace(): # Checks if there are any tags on the post
-        sql_query = 'INSERT INTO Post (title, body, creator, tags) VALUES (?,?,?,?)' # Adds a post with a title, body text, author and tags value into the database
+        sql_query = 'INSERT INTO Post (title, body, author, tag) VALUES (?,?,?,?)' # Adds a post with a title, body text, author and tags value into the database
         cursor.execute(sql_query, (title, body, user_id, tags))
     else:
-        sql_query = 'INSERT INTO Post (title, body, creator) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
+        sql_query = 'INSERT INTO Post (title, body, author) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
         cursor.execute(sql_query, (title, body, user_id))
     get_database().commit() # Saves the new post in the database
     return redirect(url_for('index'))
