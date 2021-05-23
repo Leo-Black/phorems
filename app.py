@@ -3,30 +3,25 @@ Leo Black
 Phorems Flask Application
 """
 
-from sqlite3 import connect # Gives the ability to connect to sqlite3 databases
-from flask import Flask, g, redirect, url_for, render_template, request, session # Allows the use of Flask, g, redirecting with url_for, HTML templates, requesting and the session list
-from flask_login import LoginManager # Allows the use of logging in and out via the flask login manager
 from os import urandom # Provides random bytes of a certain length
-from werkzeug.security import generate_password_hash, check_password_hash # Allows the use of hashing and checking hashed values
+from sqlite3 import connect # Gives the ability to connect to sqlite3 databases
+from flask import Flask, g, redirect, render_template, request, session, url_for # Allows the use of Flask, g, redirecting with url_for, HTML templates, requesting and the session list
+from flask_login import LoginManager # Allows the use of logging in and out via the flask login manager
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import check_password_hash, generate_password_hash # Allows the use of hashing and checking hashed values
+from config import Config
 
 app = Flask(__name__) # Initialises the app
+app.config.from_object(Config)
 login_manager = LoginManager(app) # Handles whether or not the user is logged in
+database = SQLAlchemy(app)
+
+import model
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return
-
-def get_posts(filter_by=None):
-    '''Gets the important values for each post in the database, putting the most recent post first and filtering by tags if specified.'''
-    cursor = get_database().cursor()
-    if bool(filter_by):
-        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tag, User.username, User.id FROM Post INNER JOIN User ON Post.author = User.id WHERE Post.tag LIKE ? ORDER BY Post.id DESC'
-        cursor.execute(sql_query, (''.join(('%', filter_by, '%')),)) # Executes the SQL query and checks if the tag is anywhere in the list of tags
-    else:
-        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tag, User.username, User.id FROM Post INNER JOIN User ON Post.author = User.id ORDER BY Post.id DESC'
-        cursor.execute(sql_query)
-    results = cursor.fetchall()
-    return results
 
 def get_database():
     '''Connects to the database 'database.db' using getattr and returns the connection. If the database is not found, it connects manually.'''
@@ -109,6 +104,18 @@ def index():
         return render_template('login.html')
     post_list = get_posts()
     return render_template('index.html', posts=post_list, user_id=user_id) # Renders 'index.html' and prints the list of posts
+
+def get_posts(filter_by=None):
+    '''Gets the important values for each post in the database, putting the most recent post first and filtering by tags if specified.'''
+    cursor = get_database().cursor()
+    if bool(filter_by):
+        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tag, User.username, User.id FROM Post INNER JOIN User ON Post.author = User.id WHERE Post.tag LIKE ? ORDER BY Post.id DESC'
+        cursor.execute(sql_query, (''.join(('%', filter_by, '%')),)) # Executes the SQL query and checks if the tag is anywhere in the list of tags
+    else:
+        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tag, User.username, User.id FROM Post INNER JOIN User ON Post.author = User.id ORDER BY Post.id DESC'
+        cursor.execute(sql_query)
+    results = cursor.fetchall()
+    return results
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
 def posts():
