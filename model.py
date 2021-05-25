@@ -13,12 +13,12 @@ class Post(database.Model):
   body = database.Column(database.String())
   tag = database.Column(database.String())
   comment = database.Column(database.Integer)
-  author = database.relationship('User', back_populates='id')
+  author = database.Column(database.Integer)
 
 class Comment(database.Model):
   __tablename__ = 'Comment'
   id = database.Column(database.Integer, primary_key=True)
   body = database.Column(database.String())
   code = database.Column(database.String())
-  post = database.relationship('Post', back_populates='id')
-  author = database.relationship('User', back_populates='id')
+  post = database.Column(database.Integer)
+  author = database.Column(database.Integer)

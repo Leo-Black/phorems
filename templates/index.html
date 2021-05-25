@@ -96,6 +96,10 @@
                 </div> <br>
             {% endfor %}
         {% endif %}
+
+        {% for pizza in pizza %}
+                {{ pizza.password }}
+        {% endfor %}
     </main>
 
     <footer style='padding: 30px 0px; text-align: center;'>

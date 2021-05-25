@@ -38,6 +38,11 @@ def close_connection(exception):
         database_connection.close()
     return
 
+@app.route('/test')
+def test():
+    name = model.User.query.all()
+    return render_template('index.html', pizza=name)
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     '''Allows users to sign up with a unique username and password.'''
