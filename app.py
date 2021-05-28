@@ -41,6 +41,9 @@ def close_connection(exception):
 @app.route('/test')
 def test():
     name = model.User.query.all()
+    value = model.User(username='jack', password='Jack Jones')
+    database.session.add(value)
+    database.session.commit()
     return render_template('index.html', pizza=name)
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -49,24 +52,19 @@ def signup():
     if request.method == 'GET': # Checks if values have not yet been inputted and redirects to the signup page if not
         return render_template('signup.html')
     error = None
-    cursor = get_database().cursor() # Sets up the SQL cursor
     new_username = request.form['username'] # Gets the inputted username value
     new_password = request.form['password'] # Gets the inputted password value
     if new_username == '' or new_password == '': # Checks if either the username or password are left blank
         error = 'Please enter a username and a password.'
         return render_template('signup.html', error=error) # Starts again, showing the error message
-    sql_query = 'SELECT username FROM User WHERE username = ?' # Returns all users with the same username inputted
-    cursor.execute(sql_query, (new_username,))
-    if bool(cursor.fetchall()): # Finds if there are any other users in the database with the same username
+    user_already_exists = model.User.query.filter_by(username=new_username) # Checks if the username is taken
+    if list(user_already_exists):
         error = 'Username already taken. Please try again.'
         return render_template('signup.html', error=error)
-    sql_query = 'INSERT INTO User (username, password) VALUES (?,?)' # Adds the username and password into the database
-    cursor.execute(sql_query, (new_username, generate_password_hash(new_password, 'SHA256'))) # Executes the query and hashes the password using the method SHA256
-    get_database().commit() # Commits and stores the values in the database
-    sql_query = 'SELECT id FROM User WHERE username = ?'
-    cursor.execute(sql_query, (new_username,))
+    database.session.add(model.User(username=new_username, password=generate_password_hash(new_password, 'SHA256'))) # Adds the username and password into the database and hashes the password using the method SHA256
+    database.session.commit() # Commits and stores the values in the database
     global user_id # Allows the variable user_id to be used anywhere in the program
-    user_id = cursor.fetchall()[0][0]
+    user_id = model.User.query.filter_by(username=new_username).first()
     session['logged_in'] = True # Sets the user's status as logged in
     return redirect(url_for('index'))
 
@@ -76,17 +74,14 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     error = None
-    cursor = get_database().cursor() # Sets up the SQL cursor
     username = request.form['username'] # Gets the inputted username value
     password = request.form['password'] # Gets the inputted password value
-    sql_query = 'SELECT id, password FROM User WHERE username = ?' # Returns the user with the inputted username value
-    cursor.execute(sql_query, (username,))
-    results = cursor.fetchall()
-    if bool(results): # Checks if the username entered is correct
-        if check_password_hash(results[0][1], password): # Checks if the password entered is correct
+    user = model.User.query.filter_by(username=username) # Gets the user's stored info
+    if list(user): # Checks if the username entered exists in the database
+        if check_password_hash(user[0].password, password): # Checks if the password entered is correct
             session['logged_in'] = True # Sets the user's status as logged in
             global user_id # Allows the variable user_id to be used anywhere in the program
-            user_id = results[0][0]
+            user_id = user[0].id
             return redirect(url_for('index'))
     if username == '' and password == '': # Checks if nothing is inputted and doesn't show an error
         return redirect(url_for('index'))
@@ -118,6 +113,8 @@ def get_posts(filter_by=None):
         cursor.execute(sql_query, (''.join(('%', filter_by, '%')),)) # Executes the SQL query and checks if the tag is anywhere in the list of tags
     else:
         sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tag, User.username, User.id FROM Post INNER JOIN User ON Post.author = User.id ORDER BY Post.id DESC'
+        users = model.User.query.all()
+        posts = model.Post.query.all()
         cursor.execute(sql_query)
     results = cursor.fetchall()
     return results
