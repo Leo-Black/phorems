@@ -106,18 +106,12 @@ def index():
     return render_template('index.html', posts=post_list, user_id=user_id) # Renders 'index.html' and prints the list of posts
 
 def get_posts(filter_by=None):
-    '''Gets the important values for each post in the database, putting the most recent post first and filtering by tags if specified.'''
-    cursor = get_database().cursor()
-    if bool(filter_by):
-        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tag, User.username, User.id FROM Post INNER JOIN User ON Post.author = User.id WHERE Post.tag LIKE ? ORDER BY Post.id DESC'
-        cursor.execute(sql_query, (''.join(('%', filter_by, '%')),)) # Executes the SQL query and checks if the tag is anywhere in the list of tags
+    '''Gets the information for each post in the database, putting the most recent post first and filtering by tags if specified.'''
+    if filter_by:
+        posts = model.Post.query.filter(model.Post.tag.like("%{}%".format(filter_by))).order_by(model.Post.id.desc()) # Gets all the posts in the database with the chosen tag
     else:
-        sql_query = 'SELECT Post.id, Post.title, Post.body, Post.tag, User.username, User.id FROM Post INNER JOIN User ON Post.author = User.id ORDER BY Post.id DESC'
-        users = model.User.query.all()
-        posts = model.Post.query.all()
-        cursor.execute(sql_query)
-    results = cursor.fetchall()
-    return results
+        posts = model.Post.query.order_by(model.Post.id.desc()) # Gets all the posts in the database
+    return posts
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
 def posts():

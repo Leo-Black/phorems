@@ -41,37 +41,37 @@
             <div id='posts'>
                 <!-- Post's title -->
                 <div id='title'> <h4>
-                    {{ post[1] }} 
+                    {{ post.title }} 
                 </h4></div>
                 <!-- Line break -->
                 <hr id='post-divider'>
                 <!-- Post's body text (and tags if applicable) -->
                 <div id='body'>
-                    {{ post[2] }} 
+                    {{ post.body }} 
                     <!-- Checks if the post has any tags -->
-                    {% if post[3] %}
+                    {% if post.tag %}
                         <!-- Adds a dash in bold to separate the body text from the tags-->
                         <strong>- </strong>
                         <!-- Adds tags onto the end of the body text in bold and formats them into a list -->
-                        {% for tag in post[3].split(' ')[:-1] %}
+                        {% for tag in post.tag.split(' ')[:-1] %}
                             <input type='hidden' name='tag_id' value='{{ tag }}'>
                             <a id='tags' href='/filter-by-{{ tag }}'>{{ tag }}</a><strong>,</strong>
                         {% endfor %}
                         <!-- Adds the last tag on without a comma afterward -->
-                        <a id='tags' href="/filter-by-{{ post[3].split(' ')[-1] }}">{{ post[3].split(' ')[-1] }}</a>
+                        <a id='tags' href="/filter-by-{{ post.tag.split(' ')[-1] }}">{{ post.tag.split(' ')[-1] }}</a>
                     {% endif %}
                 </div>
                 <!-- Post's creator -->
                 <div id='author'>
-                    <i>By: <strong>{{ post[4] }}</strong> </i>
+                    <i>By: <strong>{{ post.author }}</strong> </i>
                 </div>
                 <!-- Checks if the post was created by the user that logged in -->
-                {% if post[5] == user_id %}
+                {% if post.id == user_id %}
                     <br>
                     <!-- Allows users to delete their own posts -->
                     <div id='delete'>
                         <form action='/delete' method='POST' onSubmit="return confirm('Are you sure?');">
-                            <input type='hidden' name='post_id' value='{{ post[0] }}'>
+                            <input type='hidden' name='post_id' value='{{ post.id }}'>
                             <input type='submit' id='delete-button' value='Delete'>
                         </form>
                     </div>
