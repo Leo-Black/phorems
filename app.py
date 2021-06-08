@@ -38,14 +38,6 @@ def close_connection(exception):
         database_connection.close()
     return
 
-@app.route('/test')
-def test():
-    name = model.User.query.all()
-    value = model.User(username='jack', password='Jack Jones')
-    database.session.add(value)
-    database.session.commit()
-    return render_template('index.html', pizza=name)
-
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     '''Allows users to sign up with a unique username and password.'''
@@ -107,10 +99,12 @@ def index():
 
 def get_posts(filter_by=None):
     '''Gets the information for each post in the database, putting the most recent post first and filtering by tags if specified.'''
+    order = model.Post.id.desc() # Sorts the posts by most recent first
     if filter_by:
-        posts = model.Post.query.filter(model.Post.tag.like("%{}%".format(filter_by))).order_by(model.Post.id.desc()) # Gets all the posts in the database with the chosen tag
+        filter_by = model.Post.tag.like("%{}%".format(filter_by)) # Only gets posts with the chosen tag
+        posts = model.Post.query.filter(filter_by).order_by(order) # Gets posts from the database
     else:
-        posts = model.Post.query.order_by(model.Post.id.desc()) # Gets all the posts in the database
+        posts = model.Post.query.order_by(order) # Gets all the posts in the database
     return posts
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
@@ -118,7 +112,6 @@ def posts():
     '''Adds the inputted post to the database if both values are entered.'''
     if 'logged_in' not in session:
         return redirect(url_for('index'))
-    cursor = get_database().cursor()
     try: # Checks if the user typed in the post/fail url without submitting any values
         title = request.form['title'] # Gets the inputted title value
         body = request.form['post'] # Gets the inputted body text value
@@ -128,14 +121,11 @@ def posts():
     if title == '' or body == '' or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
         post_list = get_posts()
-        return render_template('index.html', posts=post_list, error=error, user_id=user_id)
-    if bool(tags) and not tags.isspace(): # Checks if there are any tags on the post
-        sql_query = 'INSERT INTO Post (title, body, author, tag) VALUES (?,?,?,?)' # Adds a post with a title, body text, author and tags value into the database
-        cursor.execute(sql_query, (title, body, user_id, tags))
-    else:
-        sql_query = 'INSERT INTO Post (title, body, author) VALUES (?,?,?)' # Adds a post with a title, body text and author value into the database 
-        cursor.execute(sql_query, (title, body, user_id))
-    get_database().commit() # Saves the new post in the database
+        return render_template('index.html', posts=post_list, user_id=user_id, error=error)
+    if tags.isspace(): # Checks if there are any tags on the post
+        tags = None
+    database.session.add(model.Post(title=title, body=body, author=user_id, tag=tags)) # Adds a post with title, body text, author and tag (if added) values into the database
+    database.session.commit() # Saves the new post in the database
     return redirect(url_for('index'))
     
 @app.route('/delete', methods=['GET','POST'])
@@ -149,13 +139,6 @@ def delete():
         sql_query = 'DELETE FROM Post WHERE id = ?'
         cursor.execute(sql_query, (post_id,))
         get_database().commit() # Saves the change to the database
-    return redirect(url_for('index'))
-
-@app.route('/account')
-def account():
-    '''Renders the HTML template 'account.html' if the user is logged in.'''
-    if 'logged_in' in session:
-        return render_template('account.html')
     return redirect(url_for('index'))
 
 @app.route('/filter-by-<tag>')
