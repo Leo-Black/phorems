@@ -118,13 +118,13 @@ def posts():
         tags = request.form['tags'] # Gets the inputted tags values (if added)
     except KeyError:
         return redirect(url_for('index'))
-    if title == '' or body == '' or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
+    if not title or not body or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
         post_list = get_posts()
         return render_template('index.html', posts=post_list, user_id=user_id, error=error)
     if tags.isspace(): # Checks if there are any tags on the post
         tags = None
-    database.session.add(model.Post(title=title, body=body, author=user_id, tag=tags)) # Adds a post with title, body text, author and tag (if added) values into the database
+    database.session.add(model.Post(title=title, body=body, author=user_id, tag=tags.lower())) # Adds a post with title, body text, author and tag (if added) values into the database
     database.session.commit() # Saves the new post in the database
     return redirect(url_for('index'))
     
@@ -134,11 +134,9 @@ def delete():
     if 'logged_in' not in session: # Sends users back to the login page if they haven't signed in
         return redirect(url_for('index'))
     if request.method == 'POST':
-        cursor = get_database().cursor()
         post_id = int(request.form['post_id']) # Gets the ID of the specified post to delete
-        sql_query = 'DELETE FROM Post WHERE id = ?'
-        cursor.execute(sql_query, (post_id,))
-        get_database().commit() # Saves the change to the database
+        database.session.query(model.Post).filter_by(id=post_id).delete()
+        database.session.commit() # Saves the change to the database
     return redirect(url_for('index'))
 
 @app.route('/filter-by-<tag>')
