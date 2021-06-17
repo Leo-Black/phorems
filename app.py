@@ -3,12 +3,13 @@ Leo Black
 Phorems Flask Application
 """
 
-from os import urandom # Provides random bytes of a certain length
-from sqlite3 import connect # Gives the ability to connect to sqlite3 databases
+from os import urandom  # Provides random bytes of a certain length
+
 from flask import Flask, g, redirect, render_template, request, session, url_for # Allows the use of Flask, g, redirecting with url_for, HTML templates, requesting and the session list
-from flask_login import LoginManager # Allows the use of logging in and out via the flask login manager
+from flask_login import LoginManager  # Allows the use of logging in and out via the flask login manager
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash # Allows the use of hashing and checking hashed values
+
 from config import Config
 
 app = Flask(__name__) # Initialises the app
@@ -21,21 +22,6 @@ import model
 
 @login_manager.user_loader
 def load_user(user_id):
-    return
-
-def get_database():
-    '''Connects to the database 'database.db' using getattr and returns the connection. If the database is not found, it connects manually.'''
-    database_connection = getattr(g, '_database', None)
-    if not bool(database_connection):
-        database_connection = g._database = connect('database.db')
-    return database_connection
-
-@app.teardown_appcontext
-def close_connection(exception):
-    '''Checks if there is a connection to the database and closes it.'''
-    database_connection = getattr(g, '_database', None)
-    if bool(database_connection):
-        database_connection.close()
     return
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -102,9 +88,9 @@ def get_posts(filter_by=None):
     order = model.Post.id.desc() # Sorts the posts by most recent first
     if filter_by:
         filter_by = model.Post.tag.like("%{}%".format(filter_by)) # Only gets posts with the chosen tag
-        posts = model.Post.query.filter(filter_by).order_by(order) # Gets posts from the database
+        posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(filter_by).order_by(order).all() # Gets posts from the database
     else:
-        posts = model.Post.query.order_by(order) # Gets all the posts in the database
+        posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).order_by(order).all() # Gets each post and the user that wrote it
     return posts
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
@@ -134,8 +120,8 @@ def delete():
     if 'logged_in' not in session: # Sends users back to the login page if they haven't signed in
         return redirect(url_for('index'))
     if request.method == 'POST':
-        post_id = int(request.form['post_id']) # Gets the ID of the specified post to delete
-        database.session.query(model.Post).filter_by(id=post_id).delete()
+        post_id = int(request.form['post_id'])
+        database.session.query(model.Post).filter_by(id=post_id).delete() # Deletes the post with the specified ID
         database.session.commit() # Saves the change to the database
     return redirect(url_for('index'))
 
