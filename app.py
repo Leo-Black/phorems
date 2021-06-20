@@ -41,8 +41,9 @@ def signup():
         return render_template('signup.html', error=error)
     database.session.add(model.User(username=new_username, password=generate_password_hash(new_password, 'SHA256'))) # Adds the username and password into the database and hashes the password using the method SHA256
     database.session.commit() # Commits and stores the values in the database
+    user = model.User.query.filter_by(username=new_username) # Gets the user's stored info
     global user_id # Allows the variable user_id to be used anywhere in the program
-    user_id = model.User.query.filter_by(username=new_username).first()
+    user_id = user[0].id
     session['logged_in'] = True # Sets the user's status as logged in
     return redirect(url_for('index'))
 
@@ -88,7 +89,7 @@ def get_posts(filter_by=None):
     order = model.Post.id.desc() # Sorts the posts by most recent first
     if filter_by:
         filter_by = model.Post.tag.like("%{}%".format(filter_by)) # Only gets posts with the chosen tag
-        posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(filter_by).order_by(order).all() # Gets posts from the database
+        posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(filter_by).order_by(order).all() # Gets posts from the database with the chosen tag
     else:
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).order_by(order).all() # Gets each post and the user that wrote it
     return posts
