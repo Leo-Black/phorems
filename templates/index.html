@@ -94,12 +94,14 @@
                         </div>
                     {% endif %}
                 </div> <br>
+                {% if post.comment %}
+                    <div id='comment-divider'></div>
+                    <div id='comments'>
+                        {{ post.comment }}
+                    </div> <br> <br>
+                {% endif %}
             {% endfor %}
         {% endif %}
-
-        {% for pizza in pizza %}
-                {{ pizza.username }}
-        {% endfor %}
     </main>
 
     <footer style='padding: 30px 0px; text-align: center;'>

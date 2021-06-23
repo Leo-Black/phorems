@@ -115,6 +115,72 @@
   margin: 0px auto;
 }
 
+#title{
+  padding-top: 10px;
+}
+
+/* Modifies the horizontal line in each post */
+#post-divider{
+  height: 1px;
+  background-color: #AAAAAA;
+  border-radius: 1px;
+}
+
+#body{
+  padding: 0px 10px;
+}
+
+/* Places the creator's name in the bottom right corner */
+#author{
+  text-align: right;
+  padding-right: 9px;
+  padding-bottom: 10px;
+}
+
+/* Places a delete post button at the bottom right corner of posts the user has made and styles it to look like the submit post button */
+#delete-button{
+  margin: -32px -3px;
+  background: #D4D4D4;
+  border: none;
+  outline: none;
+  float: right;
+  font-weight: 500;
+  color: black;
+  border-radius: 3px;
+  width: 60px;
+}
+
+#tags{
+  font-weight: 650;
+  color: black;
+}
+
+#comment-divider{
+  width: 80px;
+  height: 80px;
+  border-left: solid #555;
+  border-bottom: solid #555;
+  border-radius: 3px 8px;
+  margin: 0 auto;
+  margin-top: -35px;
+  position: relative;
+  right: 269px;
+}
+
+#comments{
+  /* Puts padding around the text*/
+  padding: 5px 10px;
+  /* Wraps text and keeps it in the box */
+  overflow-wrap: break-word;
+  border: solid #555;
+  border-radius: 10px;
+  width: 37.5%;
+  margin: 0 auto;
+  margin-top: -22px;
+  position: relative;
+  left: 77px;
+}
+
 /* The @media queries modify the post width on smaller/zoomed in screens */
 @media (max-width: 1300px) {
   #posts, #input-post {
@@ -174,44 +240,4 @@
   #signup-button, #login-button{
     margin-right: -100px;
   }
-}
-
-#title{
-  padding-top: 10px;
-}
-
-/* Modifies the horizontal line in each post */
-#post-divider{
-  height: 1px;
-  background-color: #AAAAAA;
-  border-radius: 1px;
-}
-
-#body{
-  padding: 0px 10px;
-}
-
-/* Places the creator's name in the bottom right corner */
-#author{
-  text-align: right;
-  padding-right: 9px;
-  padding-bottom: 10px;
-}
-
-/* Places a delete post button at the bottom right corner of posts the user has made and styles it to look like the submit post button */
-#delete-button{
-  margin: -32px -3px;
-  background: #D4D4D4;
-  border: none;
-  outline: none;
-  float: right;
-  font-weight: 500;
-  color: black;
-  border-radius: 3px;
-  width: 60px;
-}
-
-#tags{
-  font-weight: 650;
-  color: black;
 }
