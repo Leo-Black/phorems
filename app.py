@@ -81,18 +81,20 @@ def index():
     '''Renders the index page if the user is logged in.'''
     if 'logged_in' not in session:
         return render_template('login.html')
-    post_list = get_posts()
-    return render_template('index.html', posts=post_list, user_id=user_id) # Renders 'index.html' and prints the list of posts
+    post_info = get_posts()
+    return render_template('index.html', posts=post_info[0], comments=post_info[1], user_id=user_id) # Renders 'index.html' and prints the list of posts and comments
 
 def get_posts(filter_by=None):
     '''Gets the information for each post in the database, putting the most recent post first and filtering by tags if specified.'''
     order = model.Post.id.desc() # Sorts the posts by most recent first
-    if filter_by:
+    if filter_by: # Checks if user is searching by tag
         filter_by = model.Post.tag.like("%{}%".format(filter_by)) # Only gets posts with the chosen tag
-        posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(filter_by).order_by(order).all() # Gets posts from the database with the chosen tag
+        posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(filter_by).order_by(order).all() # Gets posts and their authors from the database with the chosen tag
+        comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.author==model.User.id).all() # Gets each comment and the user that wrote it
     else:
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).order_by(order).all() # Gets each post and the user that wrote it
-    return posts
+        comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.author==model.User.id).all() # Gets each comment and the user that wrote it
+    return posts, comments
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
 def posts():
@@ -107,8 +109,8 @@ def posts():
         return redirect(url_for('index'))
     if not title or not body or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
-        post_list = get_posts()
-        return render_template('index.html', posts=post_list, user_id=user_id, error=error)
+        post_info = get_posts()
+        return render_template('index.html', posts=post_info[0], comments=post_info[1], user_id=user_id, error=error)
     if tags.isspace(): # Checks if there are any tags on the post
         tags = None
     database.session.add(model.Post(title=title, body=body, author=user_id, tag=tags.lower())) # Adds a post with title, body text, author and tag (if added) values into the database
@@ -131,8 +133,8 @@ def tag_filter(tag):
     '''Lists all posts under a certain tag.'''
     if 'logged_in' not in session:
         return redirect(url_for('index'))
-    post_list = get_posts(tag)
-    return render_template('filter.html', tag=tag.lower(), posts=post_list, user_id=user_id)
+    post_info = get_posts(tag)
+    return render_template('filter.html', tag=tag.lower(), posts=post_info[0], comments=post_info[1], user_id=user_id)
 
 if __name__ == '__main__': # Runs the application and sets the secret key to a random 12 byte object
     app.secret_key = urandom(12)

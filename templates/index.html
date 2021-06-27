@@ -39,7 +39,7 @@
                 <h4><textarea rows='1' maxlength="100" placeholder='Enter Title (max 100 characters)' name='title' id='input-title' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea></h4>
                 <hr id='post-divider'>
                 <!-- Wraps the body text -->
-                <textarea rows='1' maxlength='1000' placeholder='Enter Body (max 1000 characters)' name='post' id='input-body' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                <textarea rows='1' maxlength='1000' placeholder='Enter Body Text (max 1000 characters)' name='post' id='input-body' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
                 <textarea rows='1'maxlength='100' placeholder='Tags (optional, separate by space)' name='tags' id='input-tags' form='post' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
                 <input type='submit' value='Post' id='submit-button'> <br>
             </form> <br>
@@ -94,12 +94,20 @@
                         </div>
                     {% endif %}
                 </div> <br>
-                {% if post.comment %}
-                    <div id='comment-divider'></div>
-                    <div id='comments'>
-                        {{ post.comment }}
-                    </div> <br> <br>
-                {% endif %}
+                {% for comment in comments %}
+                    {% if post.comment == comment[0].id %}
+                        <div id='comment-divider'></div>
+                        <div id='comments'>
+                            {{ comment[0].body }}
+                            {% if comment[0].code %}
+                                {{ comment[0].code }}
+                            {% endif %}
+                            <div id='comment-author'>
+                                <i>By: <strong>{{ comment[1] }}</strong> </i>
+                            </div>
+                        </div> <br>
+                    {% endif %}
+                {% endfor %}
             {% endfor %}
         {% endif %}
     </main>
