@@ -16,6 +16,7 @@ app = Flask(__name__) # Initialises the app
 app.config.from_object(Config)
 login_manager = LoginManager(app) # Handles whether or not the user is logged in
 database = SQLAlchemy(app)
+from app import database
 
 import model
 
@@ -99,14 +100,11 @@ def get_posts(filter_by=None):
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
 def posts():
     '''Adds the inputted post to the database if both values are entered.'''
-    if 'logged_in' not in session:
+    if 'logged_in' not in session or request.method != 'POST': # Checks if the user typed in the post/fail url without submitting any values or logging in
         return redirect(url_for('index'))
-    try: # Checks if the user typed in the post/fail url without submitting any values
-        title = request.form['title'] # Gets the inputted title value
-        body = request.form['post'] # Gets the inputted body text value
-        tags = request.form['tags'] # Gets the inputted tags values (if added)
-    except KeyError:
-        return redirect(url_for('index'))
+    title = request.form['title'] # Gets the inputted title value
+    body = request.form['post'] # Gets the inputted body text value
+    tags = request.form['tags'] # Gets the inputted tags values (if added)
     if not title or not body or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
         post_info = get_posts()
@@ -116,7 +114,23 @@ def posts():
     database.session.add(model.Post(title=title, body=body, author=user_id, tag=tags.lower())) # Adds a post with title, body text, author and tag (if added) values into the database
     database.session.commit() # Saves the new post in the database
     return redirect(url_for('index'))
-    
+
+@app.route('/add/comment', methods=['GET', 'POST'])
+def add_comment():
+    '''Adds the inputted comment to the database.'''
+    if 'logged_in' not in session or request.method != 'POST': # Sends users back to the login page if they haven't signed in
+        return redirect(url_for('index'))
+    text = request.form['text']
+    post_id = int(request.form['post_id'])
+    database.session.add(model.Comment(body=text, author=user_id, post=post_id)) # Adds the comment to the database
+    database.session.commit()
+    test = model.Post.query.filter_by(id=post_id).first()
+    test.comment = model.Comment.query.order_by(model.Comment.id.desc()).first().id
+    database.session.add(test)
+    database.session.commit() # Saves the comment to the database
+    return redirect(url_for('index'))
+        
+
 @app.route('/delete', methods=['GET','POST'])
 def delete():
     '''Allows users to delete their own posts after confirmation.'''

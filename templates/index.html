@@ -95,6 +95,7 @@
                     {% endif %}
                 </div> <br>
                 {% for comment in comments %}
+                    <!-- Prints all comments under each post if they exist -->
                     {% if post.comment == comment[0].id %}
                         <div id='comment-divider'></div>
                         <div id='comments'>
@@ -108,6 +109,14 @@
                         </div> <br>
                     {% endif %}
                 {% endfor %}
+                <div id='comment-divider'></div>
+                <div id='comments'>
+                    <form action='/add/comment' method='POST' id='add-comment'>
+                        <textarea rows='1' maxlength='1000' placeholder='Enter Comment (max 1000 characters)' name='text' id='input-comment' form='add-comment' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                        <input type='hidden' name='post_id' value='{{ post.id }}'>
+                        <input type='submit' value='Post' id='submit-button'>
+                    </form>
+                </div>
             {% endfor %}
         {% endif %}
     </main>
