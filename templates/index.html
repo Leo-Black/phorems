@@ -94,25 +94,31 @@
                         </div>
                     {% endif %}
                 </div> <br>
-                {% for comment in comments %}
-                    <!-- Prints all comments under each post if they exist -->
-                    {% if post.comment == comment[0].id %}
-                        <div id='comment-divider'></div>
-                        <div id='comments'>
-                            {{ comment[0].body }}
-                            {% if comment[0].code %}
-                                {{ comment[0].code }}
-                            {% endif %}
-                            <div id='comment-author'>
-                                <i>By: <strong>{{ comment[1] }}</strong> </i>
-                            </div>
-                        </div> <br>
-                    {% endif %}
-                {% endfor %}
+                <!-- Checks if the post has any comments -->
+                {% if post.comment %}
+                    <!-- Gets all of the comments on the post -->
+                    {% for comment in comments %}
+                        {% if comment[0].id in post.comment %}
+                            <!-- Prints all comments under each post if they exist -->
+                            <div id='comment-divider'></div>
+                            <div id='comments'>
+                                {{ comment[0].body }}
+                                <!-- Prints the code used in the comment if added -->
+                                {% if comment[0].code %}
+                                    {{ comment[0].code }}
+                                {% endif %}
+                                <div id='comment-author'>
+                                    <!-- Prints the author of the comment -->
+                                    <i>By: <strong>{{ comment[1] }}</strong> </i>
+                                </div>
+                            </div> <br>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
                 <div id='comment-divider'></div>
                 <div id='comments'>
-                    <form action='/add/comment' method='POST' id='add-comment'>
-                        <textarea rows='1' maxlength='1000' placeholder='Enter Comment (max 1000 characters)' name='text' id='input-comment' form='add-comment' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                    <form action='/add/comment' method='POST' id='add-comment-to-{{ post.id }}'>
+                        <textarea rows='1' maxlength='1000' placeholder='Enter Comment (max 1000 characters)' name='text' id='input-comment' form='add-comment-to-{{ post.id }}' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
                         <input type='hidden' name='post_id' value='{{ post.id }}'>
                         <input type='submit' value='Post' id='submit-button'>
                     </form>

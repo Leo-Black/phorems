@@ -95,6 +95,10 @@ def get_posts(filter_by=None):
     else:
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).order_by(order).all() # Gets each post and the user that wrote it
         comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.author==model.User.id).all() # Gets each comment and the user that wrote it
+        for post in posts: # Turns the comment id values into a list of integers 
+            if post[0].comment:
+                post[0].comment = list(map(int, post[0].comment.split()))
+            
     return posts, comments
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
@@ -125,7 +129,10 @@ def add_comment():
     database.session.add(model.Comment(body=text, author=user_id, post=post_id)) # Adds the comment to the database
     database.session.commit()
     test = model.Post.query.filter_by(id=post_id).first()
-    test.comment = model.Comment.query.order_by(model.Comment.id.desc()).first().id
+    if not test.comment:
+        test.comment = model.Comment.query.order_by(model.Comment.id.desc()).first().id # Sets the post's comment value to the id of its comment if no other comments exist
+    else:
+        test.comment = "{} {}".format(test.comment, model.Comment.query.order_by(model.Comment.id.desc()).first().id) # Adds the comment id to the end of the list of comments under the post
     database.session.add(test)
     database.session.commit() # Saves the comment to the database
     return redirect(url_for('index'))

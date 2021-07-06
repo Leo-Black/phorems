@@ -12,7 +12,7 @@ class Post(database.Model):
   title = database.Column(database.String())
   body = database.Column(database.String())
   tag = database.Column(database.String())
-  comment = database.Column(database.Integer)
+  comment = database.Column(database.String())
   author = database.Column(database.Integer, database.ForeignKey('User.id'))
   
 class Comment(database.Model):
