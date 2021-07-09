@@ -79,8 +79,10 @@
 }
 
 #input-tags{
+  margin-top: 13px;
+  margin-bottom: -13px;
   overflow: hidden;
-  width: 80%;
+  width: 90%;
   background: none;
   border: none;
   outline: none;
@@ -91,8 +93,8 @@
 
 /* Styles the submit post button and places it in the bottom right corner */
 #submit-button{
-  margin-top: 16px;
-  margin-right: -3px;
+  margin-top: 17px;
+  margin-right: -5px;
   background: #D4D4D4;
   border: none;
   outline: none;
@@ -139,7 +141,7 @@
 
 /* Places a delete post button at the bottom right corner of posts the user has made and styles it to look like the submit post button */
 #delete-button{
-  margin: -32px -3px;
+  margin: -31px -5px;
   background: #D4D4D4;
   border: none;
   outline: none;
@@ -157,12 +159,12 @@
 
 #comment-divider{
   width: 80px;
-  height: 80px;
+  height: 100px;
   border-left: solid #555;
   border-bottom: solid #555;
   border-radius: 3px 8px;
   margin: 0 auto;
-  margin-top: -58px;
+  margin-top: -78px;
   position: relative;
   right: 269px;
 }
@@ -184,6 +186,28 @@
 #comment-author{
   text-align: right;
   padding-right: 9px;
+}
+
+#input-comment{
+  overflow: hidden;
+  width: 99%;
+  background: none;
+  border: none;
+  outline: none;
+  resize: none;
+}
+
+#submit-comment-button{
+  margin-top: -25px;
+  margin-right: -3px;
+  background: #D4D4D4;
+  border: none;
+  outline: none;
+  float: right;
+  font-weight: 500;
+  color: black;
+  border-radius: 3px;
+  width: 60px;
 }
 
 /* The @media queries modify the post width on smaller/zoomed in screens */

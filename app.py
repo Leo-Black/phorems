@@ -15,7 +15,7 @@ from config import Config
 app = Flask(__name__) # Initialises the app
 app.config.from_object(Config)
 login_manager = LoginManager(app) # Handles whether or not the user is logged in
-database = SQLAlchemy(app)
+database = SQLAlchemy(app, session_options={"autoflush": False}) # Sets up the database and keeps it from randomly flushing and causing errors
 from app import database
 
 import model
@@ -23,6 +23,7 @@ import model
 
 @login_manager.user_loader
 def load_user(user_id):
+    '''Allows the use of the login manager.'''
     return
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -91,14 +92,12 @@ def get_posts(filter_by=None):
     if filter_by: # Checks if user is searching by tag
         filter_by = model.Post.tag.like("%{}%".format(filter_by)) # Only gets posts with the chosen tag
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(filter_by).order_by(order).all() # Gets posts and their authors from the database with the chosen tag
-        comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.author==model.User.id).all() # Gets each comment and the user that wrote it
     else:
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).order_by(order).all() # Gets each post and the user that wrote it
-        comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.author==model.User.id).all() # Gets each comment and the user that wrote it
-        for post in posts: # Turns the comment id values into a list of integers 
-            if post[0].comment:
-                post[0].comment = list(map(int, post[0].comment.split()))
-            
+    comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.author==model.User.id).all() # Gets each comment and the user that wrote it
+    for post in posts:
+        if post[0].comment and type(post[0].comment) == str: # Checks if the values have already been turned into a list
+            post[0].comment = list(map(int, post[0].comment.split())) # Turns the comment id values into a list of integers 
     return posts, comments
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
@@ -126,15 +125,17 @@ def add_comment():
         return redirect(url_for('index'))
     text = request.form['text']
     post_id = int(request.form['post_id'])
+    if not text or text.isspace():
+        return redirect(url_for('index'))
     database.session.add(model.Comment(body=text, author=user_id, post=post_id)) # Adds the comment to the database
     database.session.commit()
-    test = model.Post.query.filter_by(id=post_id).first()
-    if not test.comment:
-        test.comment = model.Comment.query.order_by(model.Comment.id.desc()).first().id # Sets the post's comment value to the id of its comment if no other comments exist
+    comment_post = model.Post.query.filter_by(id=post_id).first() # Gets the info of the post the comment was made under
+    if not comment_post.comment:
+        comment_post.comment = model.Comment.query.order_by(model.Comment.id.desc()).first().id # Sets the post's comment value to the id of its comment if no other comments exist
     else:
-        test.comment = "{} {}".format(test.comment, model.Comment.query.order_by(model.Comment.id.desc()).first().id) # Adds the comment id to the end of the list of comments under the post
-    database.session.add(test)
-    database.session.commit() # Saves the comment to the database
+        comment_post.comment = "{} {}".format(comment_post.comment, model.Comment.query.order_by(model.Comment.id.desc()).first().id) # Adds the comment id to the end of the list of comments under the post
+    database.session.add(comment_post)
+    database.session.commit() # Saves the info to the database
     return redirect(url_for('index'))
         
 
@@ -145,7 +146,7 @@ def delete():
         return redirect(url_for('index'))
     if request.method == 'POST':
         post_id = int(request.form['post_id'])
-        database.session.query(model.Post).filter_by(id=post_id).delete() # Deletes the post with the specified ID
+        database.session.query(model.Post).filter_by(id=post_id).delete() # Deletes the post with the specified id
         database.session.commit() # Saves the change to the database
     return redirect(url_for('index'))
 
