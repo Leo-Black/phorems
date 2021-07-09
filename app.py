@@ -118,15 +118,17 @@ def posts():
     database.session.commit() # Saves the new post in the database
     return redirect(url_for('index'))
 
-@app.route('/add/comment', methods=['GET', 'POST'])
+@app.route('/comment/fail', methods=['GET', 'POST']) # The user will only ever see the URL /comment/fail if the comment wasn't accepted, the function isn't solely for an error page
 def add_comment():
-    '''Adds the inputted comment to the database.'''
+    '''Adds the inputted comment to the database if not left blank.'''
     if 'logged_in' not in session or request.method != 'POST': # Sends users back to the login page if they haven't signed in
         return redirect(url_for('index'))
     text = request.form['text']
     post_id = int(request.form['post_id'])
     if not text or text.isspace():
-        return redirect(url_for('index'))
+        error = 'Please enter a valid comment.'
+        post_info = get_posts()
+        return render_template('index.html', posts=post_info[0], comments=post_info[1], user_id=user_id, error=error)
     database.session.add(model.Comment(body=text, author=user_id, post=post_id)) # Adds the comment to the database
     database.session.commit()
     comment_post = model.Post.query.filter_by(id=post_id).first() # Gets the info of the post the comment was made under
