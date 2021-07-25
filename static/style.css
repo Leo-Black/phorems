@@ -93,8 +93,9 @@
 
 /* Styles the submit post button and places it in the bottom right corner */
 #submit-button{
-  margin-top: 17px;
+  margin-top: 18px;
   margin-right: -5px;
+  padding-top: 0px;
   background: #D4D4D4;
   border: none;
   outline: none;
@@ -141,7 +142,8 @@
 
 /* Places a delete post button at the bottom right corner of posts the user has made and styles it to look like the submit post button */
 #delete-button{
-  margin: -31px -5px;
+  margin: -30px -5px;
+  padding-top: 0px;
   background: #D4D4D4;
   border: none;
   outline: none;
@@ -162,7 +164,7 @@
   height: 100px;
   border-left: solid #555;
   border-bottom: solid #555;
-  border-radius: 3px 8px;
+  border-radius: 0px 8px;
   margin: 0 auto;
   margin-top: -78px;
   position: relative;
@@ -198,8 +200,9 @@
 }
 
 #submit-comment-button{
-  margin-top: -25px;
+  margin-top: -24px;
   margin-right: -3px;
+  padding-top: 0px;
   background: #D4D4D4;
   border: none;
   outline: none;
@@ -210,46 +213,80 @@
   width: 60px;
 }
 
-/* The @media queries modify the post width on smaller/zoomed in screens */
+/* The @media queries modify the post and comment widths on smaller/zoomed in screens */
+@media (max-width: 1800px) {
+  #input-tags{
+    width: 85%;
+  }
+  #comment-divider{
+    right: 236px;
+  }
+}
+
+@media (max-width: 1600px) {
+  #input-tags{
+    width: 85%;
+  }
+  #comment-divider{
+    right: 198px;
+    width: 77px;
+  }
+}
+
 @media (max-width: 1300px) {
-  #posts, #input-post {
+  #posts, #input-post, #comments {
     width: 45%;
   }
   #input-tags{
     width: 70%;
   }
+  #comment-divider{
+    right: 188.5px;
+  }
 }
 
 @media (max-width: 1200px) {
-  #posts, #input-post {
+  #posts, #input-post, #comments {
     width: 55%;
+  }
+  #comment-divider{
+    right: 189px;
   }
  }
 
 @media (max-width: 1000px) {
-  #posts, #input-post {
+  #posts, #input-post, #comments {
     width: 65%;
+  }
+  #comment-divider{
+    right: 186.5px;
   }
 }
 
 @media (max-width: 800px) {
-  #posts, #input-post {
+  #posts, #input-post, #comments {
     width: 80%;
+  }
+  #comment-divider{
+    right: 162px;
   }
 }
 
 @media (max-width: 700px) {
-  #posts, #input-post {
+  #posts, #input-post, #comments {
     width: 100%;
   }
   #input-tags{
     height: 45px;
   }
+  #comment-divider{
+    right: 148.8px;
+  }
 }
 
 /* Widths larger than 100% need to be centred by modifying the margin */
 @media (max-width: 600px) {
-  #posts, #input-post {
+  #posts, #input-post, #comments {
     width: 150%;
     margin-left: -50px;
   }
@@ -259,14 +296,20 @@
   #login-button{
     margin-right: -100px;
   }
+  #comment-divider{
+    right: 119.5px;
+  }
 }
 
 @media (max-width: 400px) {
-  #posts, #input-post {
+  #posts, #input-post, #comments {
     width: 250%;
     margin-left: -90px;
   }
   #signup-button, #login-button{
     margin-right: -100px;
+  }
+  #comment-divider{
+    right: 111.8px;
   }
 }
