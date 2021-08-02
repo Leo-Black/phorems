@@ -34,7 +34,7 @@
     <br>
 
     <main class='Site-content' style='padding:0px 100px;'>
-    <br> <h2 style='text-align: center;'>Posts With Tag '{{ tag }}'</h2> <br>
+    <br> <h2 style='text-align: center;'>Search by '{{ search }}'</h2> <br>
     <!-- Lists each previous post -->
     {% if posts %}
         {% for post, author in posts %}
@@ -78,7 +78,7 @@
                 {% endif %}
             </div> <br>
 
-        <!-- Checks if the post has any comments -->
+            <!-- Checks if the post has any comments -->
             {% if post.comment %}
                 <!-- Gets all of the comments on the post -->
                 {% for comment in comments %}

@@ -86,18 +86,31 @@ def index():
     post_info = get_posts()
     return render_template('index.html', posts=post_info[0], comments=post_info[1], user_id=user_id) # Renders 'index.html' and prints the list of posts and comments
 
-def get_posts(filter_by=None):
-    '''Gets the information for each post in the database, putting the most recent post first and filtering by tags if specified.'''
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    '''Returns all the posts and comments including the specified search value.'''
+    if 'logged_in' not in session or request.method != 'POST': # Checks if the user typed in the post/fail url without submitting any values or logging in
+        return redirect(url_for('index'))
+    search_by = request.form['search']
+    if not search_by or search_by.isspace(): # Checks if the value was left blank
+        return redirect(url_for('index'))
+    post_info = get_posts(search_by=search_by)
+    return render_template('search.html', search=search_by, posts=post_info[0], comments=post_info[1], user_id=user_id)
+
+def get_posts(filter_by=None, search_by=None):
+    '''Gets the information for each post in the database, putting the most recent post first and filtering by tags or a search query if specified.'''
     order = model.Post.id.desc() # Sorts the posts by most recent first
     if filter_by: # Checks if user is searching by tag
         filter_by = model.Post.tag.like("%{}%".format(filter_by)) # Only gets posts with the chosen tag
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(filter_by).order_by(order).all() # Gets posts and their authors from the database with the chosen tag
+    if search_by: # Checks if the user is searching via query
+        posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(model.Post.title.like("%{}%".format(search_by)) | model.Post.body.like("%{}%".format(search_by)) | model.Post.tag.like("%{}%".format(search_by)) | model.Post.comment.like("%{}%".format(search_by))).order_by(order).all() # Gets all posts that include the search value
     else:
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).order_by(order).all() # Gets each post and the user that wrote it
-    comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.author==model.User.id).all() # Gets each comment and the user that wrote it
     for post in posts:
         if post[0].comment and type(post[0].comment) == str: # Checks if the values have already been turned into a list
             post[0].comment = list(map(int, post[0].comment.split())) # Turns the comment id values into a list of integers 
+    comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.author==model.User.id).all() # Gets each comment and the user that wrote it
     return posts, comments
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
@@ -132,10 +145,10 @@ def add_comment():
     database.session.add(model.Comment(body=text, author=user_id, post=post_id)) # Adds the comment to the database
     database.session.commit()
     comment_post = model.Post.query.filter_by(id=post_id).first() # Gets the info of the post the comment was made under
-    if not comment_post.comment:
-        comment_post.comment = model.Comment.query.order_by(model.Comment.id.desc()).first().id # Sets the post's comment value to the id of its comment if no other comments exist
+    if not comment_post.comment: # Checks if the post has any other comments
+        comment_post.comment = ' {} '.format(model.Comment.query.order_by(model.Comment.id.desc()).first().id) # Sets the post's comment value to the id of its comment if no other comments exist, adding spaces to differentiate comments
     else:
-        comment_post.comment = "{} {}".format(comment_post.comment, model.Comment.query.order_by(model.Comment.id.desc()).first().id) # Adds the comment id to the end of the list of comments under the post
+        comment_post.comment = "{}{} ".format(comment_post.comment, model.Comment.query.order_by(model.Comment.id.desc()).first().id) # Adds the comment id to the end of the list of comments under the post
     database.session.add(comment_post)
     database.session.commit() # Saves the info to the database
     return redirect(url_for('index'))
@@ -157,7 +170,7 @@ def tag_filter(tag):
     '''Lists all posts under a certain tag.'''
     if 'logged_in' not in session:
         return redirect(url_for('index'))
-    post_info = get_posts(tag)
+    post_info = get_posts(filter_by=tag)
     return render_template('filter.html', tag=tag.lower(), posts=post_info[0], comments=post_info[1], user_id=user_id)
 
 if __name__ == '__main__': # Runs the application and sets the secret key to a random 12 byte object
