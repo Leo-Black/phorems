@@ -141,6 +141,8 @@
   border-radius: 10px;
   width: 37.5%;
   margin: 0px auto;
+  position: relative;
+  z-index: 2;
 }
 
 #title{
@@ -193,6 +195,7 @@
   margin: 0 auto;
   margin-top: -151px;
   position: relative;
+  z-index: 1;
   right: 269px;
 }
 
