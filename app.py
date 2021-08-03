@@ -26,6 +26,11 @@ def load_user(user_id):
     '''Allows the use of the login manager.'''
     return
 
+@app.errorhandler(404)
+def page_not_found(e):
+    error = 'Page not found. Please try again later. (Error: 404)'
+    return render_template('404.html', error=error), 404
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     '''Allows users to sign up with a unique username and password.'''
@@ -103,7 +108,7 @@ def get_posts(filter_by=None, search_by=None):
     if filter_by: # Checks if user is searching by tag
         filter_by = model.Post.tag.like("%{}%".format(filter_by)) # Only gets posts with the chosen tag
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(filter_by).order_by(order).all() # Gets posts and their authors from the database with the chosen tag
-    if search_by: # Checks if the user is searching via query
+    elif search_by: # Checks if the user is searching via query
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).filter(model.Post.title.like("%{}%".format(search_by)) | model.Post.body.like("%{}%".format(search_by)) | model.Post.tag.like("%{}%".format(search_by)) | model.Post.comment.like("%{}%".format(search_by))).order_by(order).all() # Gets all posts that include the search value
     else:
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.author==model.User.id).order_by(order).all() # Gets each post and the user that wrote it

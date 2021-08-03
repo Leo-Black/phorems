@@ -57,10 +57,10 @@
   margin: 0px auto;
 }
 
-/* Styles the search and post title input boxes to remove resizing and wrap text onto new lines */
+/* Styles the search input boxes to remove resizing and wrap text onto new lines */
 #search-text{
   overflow: hidden;
-  width: 91%;
+  width: 90%;
   height: 56px;
   padding-top: 0px;
   background: none;
@@ -249,6 +249,9 @@
   #comment-divider{
     right: 236px;
   }
+  #search-text{
+    height: 80px;
+  }
 }
 
 @media (max-width: 1600px) {
@@ -329,6 +332,7 @@
     height: 180px;
     margin-top: -158px;
   }
+  
 }
 
 @media (max-width: 400px) {
@@ -341,5 +345,8 @@
   }
   #comment-divider{
     right: 111.8px;
+  }
+  #search-text{
+    height: 135px;
   }
 }
