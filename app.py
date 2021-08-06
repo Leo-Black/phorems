@@ -162,12 +162,26 @@ def add_comment():
 @app.route('/delete', methods=['GET','POST'])
 def delete():
     '''Allows users to delete their own posts after confirmation.'''
-    if 'logged_in' not in session: # Sends users back to the login page if they haven't signed in
+    if 'logged_in' not in session or request.method != 'POST': # Sends users back to the login page if they haven't signed in
         return redirect(url_for('index'))
-    if request.method == 'POST':
-        post_id = int(request.form['post_id'])
-        database.session.query(model.Post).filter_by(id=post_id).delete() # Deletes the post with the specified id
-        database.session.commit() # Saves the change to the database
+    post_id = int(request.form['post_id'])
+    database.session.query(model.Post).filter_by(id=post_id).delete() # Deletes the post with the specified id
+    database.session.commit() # Saves the change to the database
+    return redirect(url_for('index'))
+
+@app.route('/delete-comment', methods=['GET','POST'])
+def delete_comment():
+    '''Allows users to delete their own posts after confirmation.'''
+    if 'logged_in' not in session or request.method != 'POST': # Sends users back to the login page if they haven't signed in
+        return redirect(url_for('index'))
+    comment_id = int(request.form['comment_id'])
+    post_id = int(request.form['post_id'])
+    database.session.query(model.Comment).filter_by(id=comment_id).delete()
+    updated_post = model.Post.query.filter_by(id=post_id).first() # Gets the info of the post the comment was made under
+    comments_list = updated_post.comment.replace(' {} '.format(comment_id), ' ')
+    updated_post.comment = comments_list
+    database.session.add(updated_post)
+    database.session.commit()
     return redirect(url_for('index'))
 
 @app.route('/filter-by-<tag>')
