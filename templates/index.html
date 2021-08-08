@@ -111,6 +111,10 @@
                             <div id='comment-divider'></div>
                             <div id='comments'>
                                 {{ comment[0].body }}
+                                <div id='comment-author'>
+                                    <!-- Prints the author of the comment -->
+                                    <i>By: <strong>{{ comment[1] }}</strong> </i>
+                                </div>
                                 {% if comment[0].author == user_id %}
                                     <br>
                                     <!-- Allows users to delete their own comments -->
@@ -118,14 +122,10 @@
                                         <form action='/delete-comment' method='POST' onSubmit="return confirm('Are you sure?');">
                                             <input type='hidden' name='comment_id' value='{{ comment[0].id }}'>
                                             <input type='hidden' name='post_id' value='{{ post.id }}'>
-                                            <input type='submit' id='delete-button' value='Delete'>
+                                            <input type='submit' id='delete-comment-button' value='Delete'>
                                         </form>
                                     </div>
                                 {% endif %}
-                                <div id='comment-author'>
-                                    <!-- Prints the author of the comment -->
-                                    <i>By: <strong>{{ comment[1] }}</strong> </i>
-                                </div>
                             </div> <br>
                         {% endif %}
                     {% endfor %}

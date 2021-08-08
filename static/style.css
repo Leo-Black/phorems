@@ -188,12 +188,12 @@
 
 #comment-divider{
   width: 80px;
-  height: 173px;
+  height: 171px;
   border-left: solid #555;
   border-bottom: solid #555;
   border-radius: 0px 8px;
   margin: 0 auto;
-  margin-top: -151px;
+  margin-top: -149px;
   position: relative;
   z-index: 1;
   right: 269px;
@@ -216,6 +216,21 @@
 #comment-author{
   text-align: right;
   padding-right: 9px;
+  padding-bottom: 4px;
+}
+
+#delete-comment-button{
+  margin-top: -25px;
+  margin-right: -5px;
+  padding-top: 0px;
+  background: #D4D4D4;
+  border: none;
+  outline: none;
+  float: right;
+  font-weight: 500;
+  color: black;
+  border-radius: 3px;
+  width: 60px;
 }
 
 #input-comment{
@@ -228,8 +243,8 @@
 }
 
 #submit-comment-button{
-  margin-top: -24px;
-  margin-right: -3px;
+  margin-top: -25px;
+  margin-right: -5px;
   padding-top: 0px;
   background: #D4D4D4;
   border: none;
@@ -242,6 +257,18 @@
 }
 
 /* The @media queries modify the post and comment widths on smaller/zoomed in screens */
+@media (max-width: 2500px) {
+  #comment-divider{
+    right: 307px;
+  }
+}
+
+@media (max-width: 2000px) {
+  #comment-divider{
+    right: 269px;
+  }
+}
+
 @media (max-width: 1800px) {
   #input-tags{
     width: 85%;
