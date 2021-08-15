@@ -199,6 +199,20 @@
   right: 269px;
 }
 
+/* The filter page requires different margins for the comment divider */
+#filter-comment-divider{
+  width: 80px;
+  height: 171px;
+  border-left: solid #555;
+  border-bottom: solid #555;
+  border-radius: 0px 8px;
+  margin: 0 auto;
+  margin-top: -149px;
+  position: relative;
+  z-index: 1;
+  right: 271px;
+}
+
 #comments{
   /* Puts padding around the text*/
   padding: 5px 10px;
@@ -261,11 +275,17 @@
   #comment-divider{
     right: 307px;
   }
+  #filter-comment-divider{
+    right: 311px;
+  }
 }
 
 @media (max-width: 2000px) {
   #comment-divider{
     right: 269px;
+  }
+  #filter-comment-divider{
+    right: 271px;
   }
 }
 
@@ -275,6 +295,9 @@
   }
   #comment-divider{
     right: 236px;
+  }
+  #filter-comment-divider{
+    right: 238px;;
   }
   #search-text{
     height: 80px;
@@ -356,8 +379,8 @@
   }
   #comment-divider{
     right: 119.5px;
-    height: 180px;
-    margin-top: -158px;
+    height: 150px;
+    margin-top: -128px;
   }
   
 }

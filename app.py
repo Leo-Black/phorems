@@ -26,10 +26,12 @@ def load_user(user_id):
     '''Allows the use of the login manager.'''
     return
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     error = 'Page not found. Please try again later. (Error: 404)'
     return render_template('404.html', error=error), 404
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -54,6 +56,7 @@ def signup():
     session['logged_in'] = True # Sets the user's status as logged in
     return redirect(url_for('index'))
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''Checks if the login credentials are correct, logs in and redirects to the account page.'''
@@ -77,11 +80,13 @@ def login():
     error = 'Incorrect Credentials'
     return render_template('login.html', error=error) # Starts again and flashes the error message
 
+
 @app.route('/logout')
 def logout():
     '''Allows users to log out via the accounts page.'''
     session.pop('logged_in', None)
     return redirect(url_for('index'))
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -90,6 +95,7 @@ def index():
         return render_template('login.html')
     post_info = get_posts()
     return render_template('index.html', posts=post_info[0], comments=post_info[1], user_id=user_id) # Renders 'index.html' and prints the list of posts and comments
+
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
@@ -101,6 +107,7 @@ def search():
         return redirect(url_for('index'))
     post_info = get_posts(search_by=search_by)
     return render_template('search.html', search=search_by, posts=post_info[0], comments=post_info[1], user_id=user_id)
+
 
 def get_posts(filter_by=None, search_by=None):
     '''Gets the information for each post in the database, putting the most recent post first and filtering by tags or a search query if specified.'''
@@ -117,6 +124,7 @@ def get_posts(filter_by=None, search_by=None):
             post[0].comment = list(map(int, post[0].comment.split())) # Turns the comment id values into a list of integers 
     comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.author==model.User.id).all() # Gets each comment and the user that wrote it
     return posts, comments
+
 
 @app.route('/post/fail', methods=['GET', 'POST']) # The user will only ever see the URL /post/fail if the post wasn't accepted, the function isn't solely for an error page
 def posts():
@@ -136,6 +144,7 @@ def posts():
     database.session.commit() # Saves the new post in the database
     return redirect(url_for('index'))
 
+
 @app.route('/comment/fail', methods=['GET', 'POST']) # The user will only ever see the URL /comment/fail if the comment wasn't accepted, the function isn't solely for an error page
 def add_comment():
     '''Adds the inputted comment to the database if not left blank.'''
@@ -143,7 +152,7 @@ def add_comment():
         return redirect(url_for('index'))
     text = request.form['text']
     post_id = int(request.form['post_id'])
-    if not text or text.isspace():
+    if not text or text.isspace(): # Checks if the comment was left empty
         error = 'Please enter a valid comment.'
         post_info = get_posts()
         return render_template('index.html', posts=post_info[0], comments=post_info[1], user_id=user_id, error=error)
@@ -169,20 +178,21 @@ def delete():
     database.session.commit() # Saves the change to the database
     return redirect(url_for('index'))
 
+
 @app.route('/delete-comment', methods=['GET','POST'])
 def delete_comment():
-    '''Allows users to delete their own posts after confirmation.'''
+    '''Allows users to delete their own comments after confirmation.'''
     if 'logged_in' not in session or request.method != 'POST': # Sends users back to the login page if they haven't signed in
         return redirect(url_for('index'))
     comment_id = int(request.form['comment_id'])
     post_id = int(request.form['post_id'])
-    database.session.query(model.Comment).filter_by(id=comment_id).delete()
+    database.session.query(model.Comment).filter_by(id=comment_id).delete() # Deletes the comment from the database
     updated_post = model.Post.query.filter_by(id=post_id).first() # Gets the info of the post the comment was made under
-    comments_list = updated_post.comment.replace(' {} '.format(comment_id), ' ')
-    updated_post.comment = comments_list
+    updated_post.comment = updated_post.comment.replace(' {} '.format(comment_id), ' ') # Removes the comment from the post's list of comments
     database.session.add(updated_post)
-    database.session.commit()
+    database.session.commit() # Saves the changes to the database
     return redirect(url_for('index'))
+
 
 @app.route('/filter-by-<tag>')
 def tag_filter(tag):
@@ -191,6 +201,7 @@ def tag_filter(tag):
         return redirect(url_for('index'))
     post_info = get_posts(filter_by=tag)
     return render_template('filter.html', tag=tag.lower(), posts=post_info[0], comments=post_info[1], user_id=user_id)
+
 
 if __name__ == '__main__': # Runs the application and sets the secret key to a random 12 byte object
     app.secret_key = urandom(12)

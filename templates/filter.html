@@ -84,7 +84,7 @@
                 {% for comment in comments %}
                     <!-- Prints all comments under each post if they exist -->
                     {% if comment[0].id in post.comment %}
-                        <div id='comment-divider'></div>
+                        <div id='filter-comment-divider'></div>
                         <div id='comments'>
                             {{ comment[0].body }}
                             <!-- Prints the code used in the comment if added -->
@@ -100,7 +100,7 @@
                 {% endfor %}
             {% endif %}
         
-        <div id='comment-divider'></div>
+        <div id='filter-comment-divider'></div>
         <div id='comments'>
             <form action='/comment/fail' method='POST' id='add-comment-to-{{ post.id }}'>
                 <textarea rows='1' maxlength='200' placeholder='Enter Comment (max 200 characters)' name='text' id='input-comment' form='add-comment-to-{{ post.id }}' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
