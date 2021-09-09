@@ -86,37 +86,37 @@
                     {% endif %}
                 </div> <br>
 
-            <!-- Checks if the post has any comments -->
-                {% if post.comment %}
-                    <!-- Gets all of the comments on the post -->
-                    {% for comment in comments %}
-                        <!-- Prints all comments under each post if they exist -->
-                        {% if comment[0].id in post.comment %}
-                            <div id='filter-comment-divider'></div>
-                            <div id='comments'>
-                                {{ comment[0].body }}
-                                <!-- Prints the code used in the comment if added -->
-                                {% if comment[0].code %}
-                                    {{ comment[0].code }}
-                                {% endif %}
-                                <div id='comment-author'>
-                                    <!-- Prints the author of the comment -->
-                                    <i>By: <strong>{{ comment[1] }}</strong> </i>
-                                </div>
-                            </div> <br>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            
-            <div id='filter-comment-divider'></div>
-            <div id='comments'>
-                <form action='/comment/fail' method='POST' id='add-comment-to-{{ post.id }}'>
-                    <textarea rows='1' maxlength='200' placeholder='Enter Comment (max 200 characters)' name='text' id='input-comment' form='add-comment-to-{{ post.id }}' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
-                    <br> <br>
-                    <input type='hidden' name='post_id' value='{{ post.id }}'>
-                    <input type='submit' value='Post' id='submit-comment-button'>
-                </form>
-            </div> <br>
+                <div id='comment-background'>
+                    <!-- Checks if the post has any comments -->
+                    {% if post.comment %}
+                        <!-- Gets all of the comments on the post -->
+                        {% for comment in comments %}
+                            <!-- Prints all comments under each post if they exist -->
+                            {% if comment[0].id in post.comment %}
+                                <div id='comments'>
+                                    {{ comment[0].body }}
+                                    <!-- Prints the code used in the comment if added -->
+                                    {% if comment[0].code %}
+                                        {{ comment[0].code }}
+                                    {% endif %}
+                                    <div id='comment-author'>
+                                        <!-- Prints the author of the comment -->
+                                        <i>By: <strong>{{ comment[1] }}</strong> </i>
+                                    </div>
+                                </div> <br>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div id='comments'>
+                        <form action='/comment/fail' method='POST' id='add-comment-to-{{ post.id }}'>
+                            <textarea rows='1' maxlength='200' placeholder='Enter Comment (max 200 characters)' name='text' id='input-comment' form='add-comment-to-{{ post.id }}' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
+                            <br> <br>
+                            <input type='hidden' name='post_id' value='{{ post.id }}'>
+                            <input type='submit' value='Post' id='submit-comment-button'>
+                        </form>
+                    </div>
+                </div> <br>
             {% endfor %}
         {% endif %}
     </main>

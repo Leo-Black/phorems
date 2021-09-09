@@ -100,45 +100,45 @@
                             </form>
                         </div>
                     {% endif %}
-                </div> <br>
+                </div>
 
-                <!-- Checks if the post has any comments -->
-                {% if post.comment %}
-                    <!-- Gets all of the comments on the post -->
-                    {% for comment in comments %}
-                        <!-- Prints all comments under each post if they exist -->
-                        {% if comment[0].id in post.comment %}
-                            <div id='comment-divider'></div>
-                            <div id='comments'>
-                                {{ comment[0].body }}
-                                <div id='comment-author'>
-                                    <!-- Prints the author of the comment -->
-                                    <i>By: <strong>{{ comment[1] }}</strong> </i>
-                                </div>
-                                {% if comment[0].author == user_id %}
-                                    <br>
-                                    <!-- Allows users to delete their own comments -->
-                                    <div id='delete'>
-                                        <form action='/delete-comment' method='POST' onSubmit="return confirm('Are you sure?');">
-                                            <input type='hidden' name='comment_id' value='{{ comment[0].id }}'>
-                                            <input type='hidden' name='post_id' value='{{ post.id }}'>
-                                            <input type='submit' id='delete-comment-button' value='Delete'>
-                                        </form>
+                <div id='comment-background'>
+                    <!-- Checks if the post has any comments -->
+                    {% if post.comment %}
+                        <!-- Gets all of the comments on the post -->
+                        {% for comment in comments %}
+                            <!-- Prints all comments under each post if they exist -->
+                            {% if comment[0].id in post.comment %}
+                                <div id='comments'>
+                                    {{ comment[0].body }}
+                                    <div id='comment-author'>
+                                        <!-- Prints the author of the comment -->
+                                        <i>By: <strong>{{ comment[1] }}</strong> </i>
                                     </div>
-                                {% endif %}
-                            </div> <br>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-                
-                <div id='comment-divider'></div>
-                <div id='comments'>
-                    <form action='/comment/fail' method='POST' id='add-comment-to-{{ post.id }}'>
-                        <textarea rows='1' maxlength='200' placeholder='Enter Comment (max 200 characters)' name='text' id='input-comment' form='add-comment-to-{{ post.id }}' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
-                        <br> <br>
-                        <input type='hidden' name='post_id' value='{{ post.id }}'>
-                        <input type='submit' value='Post' id='submit-comment-button'>
-                    </form>
+                                    {% if comment[0].author == user_id %}
+                                        <br>
+                                        <!-- Allows users to delete their own comments -->
+                                        <div id='delete'>
+                                            <form action='/delete-comment' method='POST' onSubmit="return confirm('Are you sure?');">
+                                                <input type='hidden' name='comment_id' value='{{ comment[0].id }}'>
+                                                <input type='hidden' name='post_id' value='{{ post.id }}'>
+                                                <input type='submit' id='delete-comment-button' value='Delete'>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div id='comments'>
+                        <form action='/comment/fail' method='POST' id='add-comment-to-{{ post.id }}'>
+                            <textarea rows='1' maxlength='200' placeholder='Enter Comment (max 200 characters)' name='text' id='input-comment' form='add-comment-to-{{ post.id }}' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
+                            <br> <br>
+                            <input type='hidden' name='post_id' value='{{ post.id }}'>
+                            <input type='submit' value='Post' id='submit-comment-button'>
+                        </form>
+                    </div>
                 </div> <br>
             {% endfor %}
         {% endif %}
