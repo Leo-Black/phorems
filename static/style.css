@@ -193,9 +193,8 @@
   border-radius: 0px 0px 10px 10px;
   position: relative;
   margin: 0 auto;
-  padding-top: 15px;
-  padding-bottom: 5px;
-  bottom: 6px;
+  padding: 18px 0px 5px;
+  bottom: 9px;
   z-index: 1;
 }
 
@@ -257,24 +256,9 @@
 }
 
 /* The @media queries modify the post and comment widths on smaller/zoomed in screens */
-@media (max-width: 2500px) {
-  #comment-divider{
-    right: 307px;
-  }
-}
-
-@media (max-width: 2000px) {
-  #comment-divider{
-    right: 269px;
-  }
-}
-
 @media (max-width: 1800px) {
   #input-tags{
     width: 85%;
-  }
-  #comment-divider{
-    right: 236px;
   }
   #search-text{
     height: 80px;
@@ -285,66 +269,47 @@
   #input-tags{
     width: 85%;
   }
-  #comment-divider{
-    right: 198px;
-    width: 77px;
-  }
 }
 
 @media (max-width: 1300px) {
-  #search-bar, #posts, #input-post, #comments {
+  #search-bar, #posts, #input-post, #comment-background {
     width: 45%;
   }
   #input-tags{
     width: 70%;
   }
-  #comment-divider{
-    right: 188.5px;
-  }
 }
 
 @media (max-width: 1200px) {
-  #search-bar, #posts, #input-post, #comments {
+  #search-bar, #posts, #input-post, #comment-background {
     width: 55%;
-  }
-  #comment-divider{
-    right: 189px;
   }
  }
 
 @media (max-width: 1000px) {
-  #search-bar, #posts, #input-post, #comments {
+  #search-bar, #posts, #input-post, #comment-background {
     width: 65%;
-  }
-  #comment-divider{
-    right: 186.5px;
   }
 }
 
 @media (max-width: 800px) {
-  #search-bar, #posts, #input-post, #comments {
+  #search-bar, #posts, #input-post, #comment-background {
     width: 80%;
-  }
-  #comment-divider{
-    right: 162px;
   }
 }
 
 @media (max-width: 700px) {
-  #search-bar, #posts, #input-post, #comments {
+  #search-bar, #posts, #input-post, #comment-background {
     width: 100%;
   }
   #input-tags{
     height: 45px;
   }
-  #comment-divider{
-    right: 148.8px;
-  }
 }
 
 /* Widths larger than 100% need to be centred by modifying the margin */
 @media (max-width: 600px) {
-  #search-bar, #posts, #input-post, #comments {
+  #search-bar, #posts, #input-post, #comment-background {
     width: 150%;
     margin-left: -50px;
   }
@@ -353,25 +318,16 @@
   }
   #login-button{
     margin-right: -100px;
-  }
-  #comment-divider{
-    right: 119.5px;
-    height: 150px;
-    margin-top: -128px;
-  }
-  
+  }  
 }
 
 @media (max-width: 400px) {
-  #search-bar, #posts, #input-post, #comments {
+  #search-bar, #posts, #input-post, #comment-background {
     width: 250%;
     margin-left: -90px;
   }
   #signup-button, #login-button{
     margin-right: -100px;
-  }
-  #comment-divider{
-    right: 111.8px;
   }
   #search-text{
     height: 135px;
