@@ -50,7 +50,7 @@
 
 /* Styles the search bar and post input box to match previous posts */
 #search-bar, #input-post{
-  border: solid #555;
+  border: solid #666;
   border-radius: 10px;
   padding: 10px 10px 0px;
   width: 40%;
@@ -137,7 +137,7 @@
   padding: 0px 10px;
   /* Wraps text and keeps it in the box */
   overflow-wrap: break-word;
-  border: solid #555;
+  border: solid #666;
   border-radius: 10px;
   width: 40%;
   margin: 0px auto;
@@ -201,27 +201,27 @@
 
 #comments{
   /* Puts padding around the text*/
-  padding: 5px 10px;
+  padding: 5px 10px 0px;
   /* Wraps text and keeps it in the box */
   overflow-wrap: break-word;
-  border: solid #555;
   border-radius: 10px;
   background: white;
   margin: 0 auto;
   position: relative;
+  width: 98.5%;
   margin-bottom: 5px;
 }
 
 #comment-author{
   text-align: right;
   padding-right: 9px;
-  padding-bottom: 4px;
+  padding-bottom: 9px;
 }
 
 #delete-comment-button{
-  margin-top: -25px;
+  margin-top: -29px;
   margin-right: -5px;
-  padding-top: 0px;
+  padding: 0px;
   background: #D4D4D4;
   border: none;
   outline: none;
@@ -233,6 +233,7 @@
 }
 
 #input-comment{
+  padding: 0px;
   overflow: hidden;
   width: 99%;
   background: none;
@@ -242,7 +243,7 @@
 }
 
 #submit-comment-button{
-  margin-top: -25px;
+  margin-top: -30px;
   margin-right: -5px;
   padding-top: 0px;
   background: #D4D4D4;
@@ -260,17 +261,11 @@
   #comment-divider{
     right: 307px;
   }
-  #filter-comment-divider{
-    right: 311px;
-  }
 }
 
 @media (max-width: 2000px) {
   #comment-divider{
     right: 269px;
-  }
-  #filter-comment-divider{
-    right: 271px;
   }
 }
 
@@ -280,9 +275,6 @@
   }
   #comment-divider{
     right: 236px;
-  }
-  #filter-comment-divider{
-    right: 238px;;
   }
   #search-text{
     height: 80px;

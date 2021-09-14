@@ -17,32 +17,30 @@
 <!-- Adds padding of 30px on the left and right -->
 <body class='Site' style="padding: 0px 30px;">
     <div class='row'>
-        <div class='col-sm-11'>
+        <div class='col-11'>
             <!-- Sets the title in display text -->
             <h1 class='display-3'><a id='home' href='/'>phorems.</a></h1>
         </div>
-        <!-- Pushes the user icon to the far right -->
-        <div class='col-1'>
-            <!-- Puts a logout button in the far right -->
-            <form action="/logout">
-                <input type="submit" id='logout-button' value="Log Out">
-            </form>
-        </div>
+        <!-- Puts a logout button in the far right -->
+        <form action="/logout">
+            <input type="submit" id='logout-button' value="Log Out">
+        </form>
     </div>
     <!-- Adds a horizontal line as a divider between the title and the bulk of the website -->
     <hr id='site-divider'>
-    <br>
+    <br> <br>
 
     <main class='Site-content' style='padding:0px 100px;'>
-    
+
         <div id='search-bar'>
             <form action='/search' method='POST' id='search'>
                 <h2><textarea rows='1' maxlength='200' placeholder="Search Posts (max 200 characters)" id='search-text' name='search' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea></h2>
                 <input type='submit' value='Search' id='search-button'>
             </form>
         </div> <br>
-        
-        <br> <h2 style='text-align: center;'>Posts With Tag '{{ tag }}'</h2> <br>
+
+        <br> <h2 style='text-align: center;color: black;'>Posts With Tag '{{ tag }}'</h2> <br>
+
         <!-- Lists each previous post -->
         {% if posts %}
             {% for post, author in posts %}
@@ -84,7 +82,7 @@
                             </form>
                         </div>
                     {% endif %}
-                </div> <br>
+                </div>
 
                 <div id='comment-background'>
                     <!-- Checks if the post has any comments -->
@@ -95,15 +93,22 @@
                             {% if comment[0].id in post.comment %}
                                 <div id='comments'>
                                     {{ comment[0].body }}
-                                    <!-- Prints the code used in the comment if added -->
-                                    {% if comment[0].code %}
-                                        {{ comment[0].code }}
-                                    {% endif %}
                                     <div id='comment-author'>
                                         <!-- Prints the author of the comment -->
                                         <i>By: <strong>{{ comment[1] }}</strong> </i>
                                     </div>
-                                </div> <br>
+                                    {% if comment[0].author == user_id %}
+                                        <br>
+                                        <!-- Allows users to delete their own comments -->
+                                        <div id='delete'>
+                                            <form action='/delete-comment' method='POST' onSubmit="return confirm('Are you sure?');">
+                                                <input type='hidden' name='comment_id' value='{{ comment[0].id }}'>
+                                                <input type='hidden' name='post_id' value='{{ post.id }}'>
+                                                <input type='submit' id='delete-comment-button' value='Delete'>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
                             {% endif %}
                         {% endfor %}
                     {% endif %}
@@ -125,7 +130,7 @@
         <!-- Adds a horizontal line as a divider between the bulk of the website and the footer -->
         <hr id='site-divider'>
         <!-- Sets the copyright text -->
-        &copy Leo Black 2020
+        &copy Leo Black 2021
     </footer>
 </body>
 </html>
