@@ -3,10 +3,12 @@
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+  padding: 0px 30px;
 }
 
 .Site-content {
   flex: 1;
+  padding:0px 100px;
 }
 
 /* Modifies the horizontal lines at the top and bottom of the screen */
@@ -23,7 +25,11 @@
   color: #000 !important;
 }
 
-/* Styles the logout button */
+#buttons{
+  padding: 20px 45px;
+  text-align: center;
+}
+
 #logout-button, #signup-button, #login-button{
   margin-top: 45px;
   background: #D4D4D4;
@@ -48,9 +54,14 @@
   width: 75px;
 }
 
+#page-title, .error{
+  color: #000;
+  text-align: center;
+}
+
 /* Styles the search bar and post input box to match previous posts */
 #search-bar, #input-post{
-  border: solid #666;
+  border: solid #555;
   border-radius: 10px;
   padding: 10px 10px 0px;
   width: 40%;
@@ -137,7 +148,7 @@
   padding: 0px 10px;
   /* Wraps text and keeps it in the box */
   overflow-wrap: break-word;
-  border: solid #666;
+  border: solid #555;
   border-radius: 10px;
   width: 40%;
   margin: 0px auto;
@@ -253,6 +264,11 @@
   color: black;
   border-radius: 3px;
   width: 60px;
+}
+
+footer{
+  padding: 30px 0px;
+  text-align: center;
 }
 
 /* The @media queries modify the post and comment widths on smaller/zoomed in screens */

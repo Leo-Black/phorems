@@ -15,7 +15,7 @@
 </head>
 
 <!-- Adds padding of 30px on the left and right -->
-<body class='Site' style="padding: 0px 30px;">
+<body class='Site'>
     <div class='row'>
         <div class='col-11'>
             <!-- Sets the title in display text -->
@@ -30,10 +30,10 @@
     <hr id='site-divider'>
     <br>
 
-    <main class='Site-content' style='padding:0px 100px;'>
+    <main class='Site-content'>
         <!-- Prints any errors if they exist -->
         {% if error %}
-            <h3><p class='error' style='color: #000;text-align: center;'>{{ error }}</p></h3>
+            <h3><p class='error'>{{ error }}</p></h3>
         {% endif %} <br>
 
         <div id='search-bar'>
@@ -43,7 +43,7 @@
             </form>
         </div> <br> <br>
 
-        <h2 style='text-align: center;color:black;'>Create Post</h2> <br>
+        <h2 id='page-title'>Create Post</h2> <br>
         <!-- Allows the user to create a new post -->
         <div id='input-post'>
             <form action='/post/fail' method='POST' id='post'>
@@ -57,7 +57,7 @@
             </form> <br>
         </div> <br>
 
-        <br> <h2 style='text-align: center;color:black;'>Recent Activity</h2> <br>
+        <br> <h2 id='page-title'>Recent Activity</h2> <br>
 
         <!-- Lists each previous post -->
         {% if posts %}
@@ -144,7 +144,7 @@
         {% endif %}
     </main>
 
-    <footer style='padding: 30px 0px; text-align: center;'>
+    <footer>
         <!-- Adds a horizontal line as a divider between the bulk of the website and the footer -->
         <hr id='site-divider'>
         <!-- Sets the copyright text -->
