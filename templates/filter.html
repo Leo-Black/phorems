@@ -28,16 +28,9 @@
     </div>
     <!-- Adds a horizontal line as a divider between the title and the bulk of the website -->
     <hr id='site-divider'>
-    <br> <br>
+
 
     <main class='Site-content'>
-
-        <div id='search-bar'>
-            <form action='/search' method='POST' id='search'>
-                <h2><textarea rows='1' maxlength='200' placeholder="Search Posts (max 200 characters)" id='search-text' name='search' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea></h2>
-                <input type='submit' value='Search' id='search-button'>
-            </form>
-        </div> <br>
 
         <br> <h2 id='page-title'>Posts With Tag '{{ tag }}'</h2> <br>
 

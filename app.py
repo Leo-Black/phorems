@@ -39,8 +39,8 @@ def signup():
     if request.method == 'GET': # Checks if values have not yet been inputted and redirects to the signup page if not
         return render_template('signup.html')
     error = None
-    new_username = request.form['username'] # Gets the inputted username value
-    new_password = request.form['password'] # Gets the inputted password value
+    new_username = request.form['username']
+    new_password = request.form['password']
     if new_username == '' or new_password == '': # Checks if either the username or password are left blank
         error = 'Please enter a username and a password.'
         return render_template('signup.html', error=error) # Starts again, showing the error message
@@ -63,19 +63,19 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     error = None
-    username = request.form['username'] # Gets the inputted username value
-    password = request.form['password'] # Gets the inputted password value
+    username = request.form['username']
+    password = request.form['password'] 
     user = model.User.query.filter_by(username=username) # Gets the user's stored info
     if list(user): # Checks if the username entered exists in the database
         if check_password_hash(user[0].password, password): # Checks if the password entered is correct
-            session['logged_in'] = True # Sets the user's status as logged in
+            session['logged_in'] = True 
             global user_id # Allows the variable user_id to be used anywhere in the program
             user_id = user[0].id
             return redirect(url_for('index'))
     if username == '' and password == '': # Checks if nothing is inputted and doesn't show an error
         return redirect(url_for('index'))
-    if username == '' or password == '' or username.isspace():
-        error = 'Please enter a valid username and password.' # Checks if nothing is inputted in one of the values or if the username is just whitespace
+    if username == '' or password == '' or username.isspace(): # Checks if value is invalid
+        error = 'Please enter a valid username and password.' 
         return render_template('login.html', error=error)
     error = 'Incorrect Credentials'
     return render_template('login.html', error=error) # Starts again and flashes the error message
@@ -131,9 +131,9 @@ def posts():
     '''Adds the inputted post to the database if both values are entered.'''
     if 'logged_in' not in session or request.method != 'POST': # Checks if the user typed in the post/fail url without submitting any values or logging in
         return redirect(url_for('index'))
-    title = request.form['title'] # Gets the inputted title value
-    body = request.form['post'] # Gets the inputted body text value
-    tags = request.form['tags'] # Gets the inputted tags values (if added)
+    title = request.form['title']
+    body = request.form['post'] 
+    tags = request.form['tags'] 
     if not title or not body or title.isspace() or body.isspace(): # Checks if either value were left blank or are only spaces
         error = 'Please enter a valid title and body text.'
         post_info = get_posts()
