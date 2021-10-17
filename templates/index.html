@@ -105,9 +105,8 @@
                 <div id='comment-background'>
                     <!-- Checks if the post has any comments -->
                     {% if post.comment %}
-                        <!-- Gets all of the comments on the post -->
                         {% for comment in comments %}
-                            <!-- Prints all comments under each post if they exist -->
+                            <!-- Prints all comments under the post if any exist -->
                             {% if comment[0].id in post.comment %}
                                 <div id='comments'>
                                     {{ comment[0].body }}
