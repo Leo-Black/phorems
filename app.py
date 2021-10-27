@@ -94,6 +94,7 @@ def index():
     if 'logged_in' not in session:
         return render_template('login.html')
     post_info = get_posts()
+    print(post_info)
     return render_template('index.html', posts=post_info[0], comments=post_info[1], user_id=user_id) # Renders 'index.html' and prints the list of posts and comments
 
 
@@ -113,16 +114,17 @@ def get_posts(filter_by=None, search_by=None):
     '''Gets the information for each post in the database, putting the most recent post first and filtering by tags or a search query if specified.'''
     order = model.Post.id.desc() # Sorts the posts by most recent first
     if filter_by: # Checks if user is searching by tag
-        filter_by = model.Post.tag.like("%{}%".format(filter_by)) # Only gets posts with the chosen tag
+        print(model.Post.tag) # {{ IF FILTERING_TAG IN POST.TAG.TAG }} IN FOR LOOP IN HTML
+        filter_by = model.Post.tag.tag.like("%{}%".format(filter_by)) # Only gets posts with the chosen tag
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.user==model.User.id).filter(filter_by).order_by(order).all() # Gets posts and their authors from the database with the chosen tag
     elif search_by: # Checks if the user is searching via query
         posts = database.session.query(model.Post, model.User.username).filter(model.Post.user==model.User.id).filter(model.Post.title.like("%{}%".format(search_by)) | model.Post.body.like("%{}%".format(search_by)) | model.Post.tag.like("%{}%".format(search_by)) | model.Post.comment.like("%{}%".format(search_by))).order_by(order).all() # Gets all posts that include the search value
     else:
-        posts = database.session.query(model.Post, model.User.username).filter(model.Post.user==model.User.id).order_by(order).all() # Gets each post and the user that wrote it
-    for post in posts:
-        if post[0].comment and type(post[0].comment) == str: # Checks if the values have already been turned into a list
-            post[0].comment = list(map(int, post[0].comment.split())) # Turns the comment id values into a list of integers 
-    comments = database.session.query(model.Comment, model.User.username).filter(model.Comment.user==model.User.id).all() # Gets each comment and the user that wrote it
+        posts = model.Post.query.order_by(order).all() # Gets each post and the user that wrote it
+    # for post in posts:
+    #     if post[0].comment and type(post[0].comment) == str: # Checks if the values have already been turned into a list
+    #         post[0].comment = list(map(int, post[0].comment.split())) # Turns the comment id values into a list of integers 
+    comments = model.Comment.query.all() # Gets each comment and the user that wrote it
     return posts, comments
 
 
