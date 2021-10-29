@@ -72,26 +72,15 @@
                     <!-- Post's body text (and tags if applicable) -->
                     <div id='body'>
                         {{ post.body }} 
-                        <!-- Adds a dash in bold to separate the body text from the tags-->
-                        <strong>- </strong>
                         <!-- Prints the post's tags -->
                         {% if post.tag %}
+                            <!-- Adds a dash in bold to separate the body text from the tags-->
+                            <strong>- </strong>
                             {% for tag in post.tag[:-1] %}
-                                <a id='tags' href='/filter-by-{{ tag }}'>{{ tag.tag }}</a> <strong>,</strong>
+                                <a id='tags' href='/filter-by-{{ tag.tag }}'>{{ tag.tag }}</a><strong>,</strong>
                             {% endfor %}
                             <a id='tags' href="/filter-by-{{ post.tag[-1].tag }}">{{ post.tag[-1].tag }}</a>
                         {% endif %}
-                        
-                        {#% if post.tag %}
-                            
-                            <!-- Adds tags onto the end of the body text in bold and formats them into a list -->
-                            {% for tag in post.tag.split(' ')[:-1] %}
-                                <input type='hidden' name='tag_id' value='{{ tag }}'>
-                                <a id='tags' href='/filter-by-{{ tag }}'>{{ tag }}</a><strong>,</strong>
-                            {% endfor %}
-                            <!-- Adds the last tag on without a comma afterward -->
-                            <a id='tags' href="/filter-by-{{ post.tag.split(' ')[-1] }}">{{ post.tag.split(' ')[-1] }}</a>
-                        {% endif %#}
                     </div>
                     <!-- Post's creator -->
                     <div id='author'>
@@ -111,32 +100,29 @@
                 </div>
 
                 <div id='comment-background'>
-                    <!-- Checks if the post has any comments -->
-                    {% if post.comment %}
-                        {% for comment in comments %}
+                    {% for comment in comments %}
+                        {% if comment.post == post.id %}
                             <!-- Prints all comments under the post if any exist -->
-                            {% if comment[0].id in post.comment %}
-                                <div id='comments'>
-                                    {{ comment[0].body }}
-                                    <div id='comment-author'>
-                                        <!-- Prints the author of the comment -->
-                                        <i>By: <strong>{{ comment[1] }}</strong> </i>
-                                    </div>
-                                    {% if comment[0].author == user_id %}
-                                        <br>
-                                        <!-- Allows users to delete their own comments -->
-                                        <div id='delete'>
-                                            <form action='/delete-comment' method='POST' onSubmit="return confirm('Are you sure?');">
-                                                <input type='hidden' name='comment_id' value='{{ comment[0].id }}'>
-                                                <input type='hidden' name='post_id' value='{{ post.id }}'>
-                                                <input type='submit' id='delete-comment-button' value='Delete'>
-                                            </form>
-                                        </div>
-                                    {% endif %}
+                            <div id='comments'>
+                                {{ comment.comment }}
+                                <div id='comment-author'>
+                                    <!-- Prints the author of the comment -->
+                                    <i>By: <strong>{{ comment.user_name.username }}</strong> </i>
                                 </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
+                                {% if comment.user == user_id %}
+                                    <br>
+                                    <!-- Allows users to delete their own comments -->
+                                    <div id='delete'>
+                                        <form action='/delete-comment' method='POST' onSubmit="return confirm('Are you sure?');">
+                                            <input type='hidden' name='comment_id' value='{{ comment.id }}'>
+                                            <input type='hidden' name='post_id' value='{{ post.id }}'>
+                                            <input type='submit' id='delete-comment-button' value='Delete'>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                     
                     <div id='comments'>
                         <form action='/comment/fail' method='POST' id='add-comment-to-{{ post.id }}'>

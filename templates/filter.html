@@ -36,85 +36,82 @@
 
         <!-- Lists each previous post -->
         {% if posts %}
-            {% for post, author in posts %}
-                <div id='posts'>
-                    <!-- Post's title -->
-                    <div id='title'> <h4>
-                        {{ post.title }} 
-                    </h4></div>
-                    <!-- Line break -->
-                    <hr id='post-divider'>
-                    <!-- Post's body text (and tags if applicable) -->
-                    <div id='body'>
-                        {{ post.body }} 
-                        <!-- Checks if the post has any tags -->
-                        {% if post.tag %}
-                            <!-- Adds a dash in bold to separate the body text from the tags-->
-                            <strong>- </strong>
-                            <!-- Adds tags onto the end of the body text in bold and formats them into a list -->
-                            {% for tag in post.tag.split(' ')[:-1] %}
-                                <input type='hidden' name='tag_id' value='{{ tag }}'>
-                                <a id='tags' href='/filter-by-{{ tag }}'>{{ tag }}</a><strong>,</strong>
-                            {% endfor %}
-                            <!-- Adds the last tag on without a comma afterward -->
-                            <a id='tags' href="/filter-by-{{ post.tag.split(' ')[-1] }}">{{ post.tag.split(' ')[-1] }}</a>
-                        {% endif %}
-                    </div>
-                    <!-- Post's creator -->
-                    <div id='author'>
-                        <i>By: <strong>{{ author }}</strong> </i>
-                    </div>
-                    <!-- Checks if the post was created by the user that logged in -->
-                    {% if post.author == user_id %}
-                        <br>
-                        <!-- Allows users to delete their own posts -->
-                        <div id='delete'>
-                            <form action='/delete' method='POST' onSubmit="return confirm('Are you sure?');">
-                                <input type='hidden' name='post_id' value='{{ post.id }}'>
-                                <input type='submit' id='delete-button' value='Delete'>
-                            </form>
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div id='comment-background'>
-                    <!-- Checks if the post has any comments -->
-                    {% if post.comment %}
-                        <!-- Gets all of the comments on the post -->
-                        {% for comment in comments %}
-                            <!-- Prints all comments under each post if they exist -->
-                            {% if comment[0].id in post.comment %}
-                                <div id='comments'>
-                                    {{ comment[0].body }}
-                                    <div id='comment-author'>
-                                        <!-- Prints the author of the comment -->
-                                        <i>By: <strong>{{ comment[1] }}</strong> </i>
-                                    </div>
-                                    {% if comment[0].author == user_id %}
-                                        <br>
-                                        <!-- Allows users to delete their own comments -->
-                                        <div id='delete'>
-                                            <form action='/delete-comment' method='POST' onSubmit="return confirm('Are you sure?');">
-                                                <input type='hidden' name='comment_id' value='{{ comment[0].id }}'>
-                                                <input type='hidden' name='post_id' value='{{ post.id }}'>
-                                                <input type='submit' id='delete-comment-button' value='Delete'>
-                                            </form>
-                                        </div>
-                                    {% endif %}
+            {% for post in posts %}
+                {% for tag in post.tag %}
+                    {% if tag.tag == filtering_tag %}
+                        <div id='posts'>
+                            <!-- Post's title -->
+                            <div id='title'> <h4>
+                                {{ post.title }} 
+                            </h4></div>
+                            <!-- Line break -->
+                            <hr id='post-divider'>
+                            <!-- Post's body text (and tags if applicable) -->
+                            <div id='body'>
+                                {{ post.body }} 
+                                <!-- Prints the post's tags -->
+                                {% if post.tag %}
+                                    <!-- Adds a dash in bold to separate the body text from the tags-->
+                                    <strong>- </strong>
+                                    {% for tag in post.tag[:-1] %}
+                                        <a id='tags' href='/filter-by-{{ tag.tag }}'>{{ tag.tag }}</a><strong>,</strong>
+                                    {% endfor %}
+                                    <a id='tags' href="/filter-by-{{ post.tag[-1].tag }}">{{ post.tag[-1].tag }}</a>
+                                {% endif %}
+                            </div>
+                            <!-- Post's creator -->
+                            <div id='author'>
+                                <i>By: <strong>{{ post.user_name.username }}</strong> </i>
+                            </div>
+                            <!-- Checks if the post was created by the user that logged in -->
+                            {% if post.user_name.username == user_id %}
+                                <br>
+                                <!-- Allows users to delete their own posts -->
+                                <div id='delete'>
+                                    <form action='/delete' method='POST' onSubmit="return confirm('Are you sure?');">
+                                        <input type='hidden' name='post_id' value='{{ post.id }}'>
+                                        <input type='submit' id='delete-button' value='Delete'>
+                                    </form>
                                 </div>
                             {% endif %}
-                        {% endfor %}
+                        </div>
+
+                        <div id='comment-background'>
+                            {% for comment in comments %}
+                                {% if comment.post == post.id %}
+                                    <!-- Prints all comments under each post if they exist -->
+                                    <div id='comments'>
+                                        {{ comment.comment }}
+                                        <div id='comment-author'>
+                                            <!-- Prints the author of the comment -->
+                                            <i>By: <strong>{{ comment.user_name.username }}</strong> </i>
+                                        </div>
+                                        {% if comment.user == user_id %}
+                                            <br>
+                                            <!-- Allows users to delete their own comments -->
+                                            <div id='delete'>
+                                                <form action='/delete-comment' method='POST' onSubmit="return confirm('Are you sure?');">
+                                                    <input type='hidden' name='comment_id' value='{{ comment.id }}'>
+                                                    <input type='hidden' name='post_id' value='{{ post.id }}'>
+                                                    <input type='submit' id='delete-comment-button' value='Delete'>
+                                                </form>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <div id='comments'>
+                                <form action='/comment/fail' method='POST' id='add-comment-to-{{ post.id }}'>
+                                    <textarea rows='1' maxlength='200' placeholder='Enter Comment (max 200 characters)' name='text' id='input-comment' form='add-comment-to-{{ post.id }}' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
+                                    <br> <br>
+                                    <input type='hidden' name='post_id' value='{{ post.id }}'>
+                                    <input type='submit' value='Post' id='submit-comment-button'>
+                                </form>
+                            </div>
+                        </div> <br>
                     {% endif %}
-                    
-                    <div id='comments'>
-                        <form action='/comment/fail' method='POST' id='add-comment-to-{{ post.id }}'>
-                            <textarea rows='1' maxlength='200' placeholder='Enter Comment (max 200 characters)' name='text' id='input-comment' form='add-comment-to-{{ post.id }}' oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
-                            <br> <br>
-                            <input type='hidden' name='post_id' value='{{ post.id }}'>
-                            <input type='submit' value='Post' id='submit-comment-button'>
-                        </form>
-                    </div>
-                </div> <br>
+                {% endfor %}
             {% endfor %}
         {% endif %}
     </main>
