@@ -218,19 +218,6 @@ def add_comment():
             user=user_id,
             post=post_id))  # Adds the comment to the database
     database.session.commit()
-    # Gets the info of the post the comment was made under
-    comment_post = model.Post.query.filter_by(id=post_id).first()
-    if not comment_post.comment:  # Checks if the post has any other comments
-        # Sets the post's comment value to the id of its comment if no other
-        # comments exist, adding spaces to differentiate comments
-        comment_post.comment = ' {} '.format(
-            model.Comment.query.order_by(
-                model.Comment.id.desc()).first().id)
-    else:
-        comment_post.comment = "{}{} ".format(comment_post.comment, model.Comment.query.order_by(
-            model.Comment.id.desc()).first().id)  # Adds the comment id to the end of the list of comments under the post
-    database.session.add(comment_post)
-    database.session.commit()  # Saves the info to the database
     return redirect(url_for('index'))
 
 
@@ -252,15 +239,8 @@ def delete_comment():
     if 'logged_in' not in session or request.method != 'POST':  # Sends users back to the login page if they haven't signed in
         return redirect(url_for('index'))
     comment_id = int(request.form['comment_id'])
-    post_id = int(request.form['post_id'])
     database.session.query(model.Comment).filter_by(
         id=comment_id).delete()  # Deletes the comment from the database
-    # Gets the info of the post the comment was made under
-    updated_post = model.Post.query.filter_by(id=post_id).first()
-    updated_post.comment = updated_post.comment.replace(
-        ' {} '.format(comment_id),
-        ' ')  # Removes the comment from the post's list of comments
-    database.session.add(updated_post)
     database.session.commit()  # Saves the changes to the database
     return redirect(url_for('index'))
 
