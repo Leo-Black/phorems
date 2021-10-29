@@ -64,7 +64,7 @@
                                 <i>By: <strong>{{ post.user_name.username }}</strong> </i>
                             </div>
                             <!-- Checks if the post was created by the user that logged in -->
-                            {% if post.user_name.username == user_id %}
+                            {% if post.user == user_id %}
                                 <br>
                                 <!-- Allows users to delete their own posts -->
                                 <div id='delete'>
